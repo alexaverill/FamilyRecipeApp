@@ -1,0 +1,26 @@
+.recipes{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.titleRow{
+    display: flex;
+    flex-direction: row;
+}
+.leftAlign{
+    text-align: left;
+}
+.list{
+    display: flex;
+    flex-direction: column;
+}
+.entry::before{
+    content: '\2022';
+    font-weight: bold;
+    font-size: larger;
+}
+.entry{
+	text-align: left;
+	display: flex;
+	align-items: center;
+}
