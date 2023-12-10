@@ -7,9 +7,10 @@ import './RecipeForm.css'
 import EditableText from '../EditableText/EditableText';
 import { useState } from 'react';
 export default function RecipeForm() {
+    const [recipeId,setRecipeId] = useState(null);
     const [title,setTitle] = useState('Title');
     const [description, setDescription] = useState('Description');
-
+    
     const [ingredients, setIngredients] = useState(['']);
     const [instructions, setInstructions] = useState([''])
     const handleIngredientEnter = (event) => {
@@ -55,29 +56,49 @@ export default function RecipeForm() {
     }
     const setInstructionChanged = (index, value) => {
 
-        ingredients.splice(index, 1, value);
-        setIngredients([...ingredients]);
+        instructions.splice(index, 1, value);
+        setInstructions([...instructions]);
     }
     let instructionDisplay = instructions.map((instruction, index) => {
         var isLast = index === instructions.length - 1 && index > 0;
         if (isLast) {
             return <div className='entry'>
 
-                <TextField key={instruction + index} size='small' onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)} autoFocus></TextField>
+                <TextField size='small' value={instruction} onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)} autoFocus></TextField>
             </div>
         }
         return <div className='entry'>
-            <TextField key={instruction + index} size='small' onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)}></TextField>
+            <TextField size='small' value={instruction} onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)}></TextField>
         </div>
     });
-    const handleSave = ()=>{
+    const handleSave = async ()=>{
         let eventObj = {
+            userId:123,
+            recipeId,
             title,
             description,
             ingredients,
             instructions
         };
         console.log(eventObj);
+        let url='/create-recipe'
+        let data = await fetch(process.env.REACT_APP_API_URL+url, {
+            method: "POST",
+            headers:{
+             //'Authorization':`Bearer ${token}`,
+             "Content-Type": "application/json",
+            },
+            body: JSON.stringify(eventObj),
+            })
+            .then((response) => response.json())
+            .catch((err) => {
+                console.log(err);
+               console.log(err.message);
+            });  
+        console.log(data);
+        if(data){
+            setRecipeId(data.recipeId);
+        }
     }
     const handlePublish = ()=>{
         

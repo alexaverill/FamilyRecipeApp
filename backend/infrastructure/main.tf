@@ -65,3 +65,89 @@ resource "aws_dynamodb_table" "recipe-users-dynamodb-table" {
 
   }
 }
+// Lambdas
+module "create_recipe_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/createRecipe"
+  output_path = "${path.module}/createRecipe.zip"
+  lambda_name = "createrecipe-lambda"
+  handler_path = "index.handler"
+}
+
+
+#api gateway
+resource "aws_apigatewayv2_api" "recipeapp-gateway" {
+  name          = "RecipeAppsGateway"
+  protocol_type = "HTTP"
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["POST", "GET", "DELETE","OPTIONS"]
+    allow_headers = ["content-type","authorization"]
+    max_age = 300
+  }
+}
+resource "aws_apigatewayv2_stage" "recipeApp_gateway_stage" {
+  api_id = aws_apigatewayv2_api.recipeapp-gateway.id
+
+  name        = "recipeapp_gateway_stage"
+  auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gw.arn
+
+    format = jsonencode({
+      requestId               = "$context.requestId"
+      sourceIp                = "$context.identity.sourceIp"
+      requestTime             = "$context.requestTime"
+      protocol                = "$context.protocol"
+      httpMethod              = "$context.httpMethod"
+      resourcePath            = "$context.resourcePath"
+      routeKey                = "$context.routeKey"
+      status                  = "$context.status"
+      responseLength          = "$context.responseLength"
+      integrationErrorMessage = "$context.integrationErrorMessage"
+      }
+    )
+  }
+}
+resource "aws_cloudwatch_log_group" "api_gw" {
+  name = "/aws/api_gw/${aws_apigatewayv2_api.recipeapp-gateway.name}"
+
+  retention_in_days = 30
+}
+resource "aws_cloudwatch_log_group" "api_gw_stage" {
+  name = "/aws/api_gw/${aws_apigatewayv2_stage.recipeApp_gateway_stage.id}/example"
+
+  retention_in_days = 30
+}
+
+# resource "aws_apigatewayv2_authorizer" "auth" {
+#   # name          = "CognitoUserPoolAuthorizer"
+#   # type          = "JWT"
+#   # rest_api_id   = aws_apigatewayv2_api.familylistapp_gateway.id
+#   # provider_arns = ["${aws_cognito_user_pool.pool.arn}"]
+#   api_id           = aws_apigatewayv2_api.familylistapp_gateway.id
+#   authorizer_type  = "JWT"
+#   identity_sources = ["$request.header.Authorization"]
+#   name             = "authorizer"
+
+#   jwt_configuration {
+#      audience = [aws_cognito_user_pool_client.client.id]
+#     issuer   = "https://${aws_cognito_user_pool.pool.endpoint}"
+#   }
+# }
+
+module "create_recipe_api" {
+  permission_name = "get-list"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="create-recipe"
+  method="POST"
+  lambda_arn = module.create_recipe_lambda.lambda_arn
+  lambda_function_name = module.create_recipe_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}

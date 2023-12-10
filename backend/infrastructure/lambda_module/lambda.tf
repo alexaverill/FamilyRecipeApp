@@ -18,9 +18,9 @@ variable "source_path" {
 variable "output_path" {
   type = string
 }
-variable "lambda_layer_arn"{
-  type = string
-}
+# variable "lambda_layer_arn"{
+#   type = string
+# }
 variable "handler_path" {
   type = string
 }
@@ -59,7 +59,7 @@ resource "aws_lambda_function" "lambda_function" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
-  layers = [var.lambda_layer_arn]
+  //layers = [var.lambda_layer_arn]
 }
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.lambda_name}_role"
