@@ -7,52 +7,91 @@ import './RecipeForm.css'
 import EditableText from '../EditableText/EditableText';
 import { useState } from 'react';
 export default function RecipeForm() {
+    const [title,setTitle] = useState('Title');
+    const [description, setDescription] = useState('Description');
+
     const [ingredients, setIngredients] = useState(['']);
     const [instructions, setInstructions] = useState([''])
     const handleIngredientEnter = (event) => {
-        if(event.key ==="Enter" ){
-            setIngredients([...ingredients,'']);
+        if (event.key === "Enter") {
+            setIngredients([...ingredients, '']);
         }
     }
-    let ingredientDisplay = ingredients.map((ingredient,index) => {
-        var isLast = index === ingredients.length-1 && index >0;
-        if(isLast){
-            return <div className='entry'>
-            
-            <TextField key={ingredient+index} size='small' onKeyDown={handleIngredientEnter} autoFocus></TextField>
-        </div>
+    const removeIngredient = (index, ingredient) => {
+        ingredients.splice(index, 1);
+        if (ingredients.length == 0) {
+            setIngredients(['']);
+            return;
         }
-        return <div className='entry'>      
-            <TextField key={ingredient+index} size='small' onKeyDown={handleIngredientEnter}></TextField>
+        setIngredients([...ingredients]);
+    }
+    const setIngredientChanged = (index, value) => {
+
+        ingredients.splice(index, 1, value);
+        setIngredients([...ingredients]);
+    }
+    let ingredientDisplay = ingredients.map((ingredient, index) => {
+        var isLast = index === ingredients.length - 1 && index > 0;
+        if (isLast) {
+            return <div className='entry'>
+
+                <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)} autoFocus></TextField>
+                <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>
+            </div>
+        }
+        return <div className='entry'>
+            <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)}></TextField>
+            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>}
         </div>
     });
+    const removeInstructions = (index) => {
+        instructions.splice(index, 1)
+        setInstructions([...instructions]);
+    }
     const handleInstructionEnter = (event) => {
-        if(event.key ==="Enter" ){
-            setInstructions([...instructions,'']);
+        if (event.key === "Enter") {
+            setInstructions([...instructions, '']);
         }
     }
-    let instructionDisplay = instructions.map((instruction,index) => {
-        var isLast = index === instructions.length-1 && index >0;
-        if(isLast){
+    const setInstructionChanged = (index, value) => {
+
+        ingredients.splice(index, 1, value);
+        setIngredients([...ingredients]);
+    }
+    let instructionDisplay = instructions.map((instruction, index) => {
+        var isLast = index === instructions.length - 1 && index > 0;
+        if (isLast) {
             return <div className='entry'>
-            
-            <TextField key={instruction+index} size='small' onKeyDown={handleInstructionEnter} autoFocus></TextField>
-        </div>
+
+                <TextField key={instruction + index} size='small' onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)} autoFocus></TextField>
+            </div>
         }
-        return <div className='entry'>      
-            <TextField key={instruction+index} size='small' onKeyDown={handleInstructionEnter}></TextField>
+        return <div className='entry'>
+            <TextField key={instruction + index} size='small' onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)}></TextField>
         </div>
     });
+    const handleSave = ()=>{
+        let eventObj = {
+            title,
+            description,
+            ingredients,
+            instructions
+        };
+        console.log(eventObj);
+    }
+    const handlePublish = ()=>{
+        
+    }
     return (
         <Container>
             <div className='recipes'>
                 <div className="titleRow">
-                    <h1><EditableText initialText="Title" /></h1>
-                    <Button>Save</Button>
-                    <Button>Publish</Button>
+                    <h1><EditableText initialText="Title" onChange={(e)=>setTitle(e.target.value)} text={title}/></h1>
+                    <Button onClick={handleSave}>Save</Button>
+                    <Button onClick={handlePublish}>Publish</Button>
                 </div>
                 <div className='leftAlign descriptionRow'>
-                    <EditableText initialText="Description" />
+                    <EditableText initialText="Description" onChange={(e)=>setDescription(e.target.value)} text={description}/>
                 </div>
                 <div className='leftAlign'>
                     Pairs
@@ -69,7 +108,7 @@ export default function RecipeForm() {
                 <div>
                     <h2>Instructions</h2>
                     <div className='list'>
-                        {ingredientDisplay}
+                        {instructionDisplay}
                     </div>
                 </div>
             </div>
