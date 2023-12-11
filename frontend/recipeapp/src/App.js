@@ -3,6 +3,9 @@ import './App.css';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import RecipeForm from './Components/RecipeForm/RecipeForm';
+import { Route, Routes } from 'react-router-dom';
+import Recipes from './Components/Recipes/Recipes';
+import RecipeView from './Components/RecipeView/RecipeView';
 function App() {
   return (
     <div className="App">
@@ -26,7 +29,12 @@ function App() {
             LOGO
           </Typography>
     </AppBar>
-    <RecipeForm/>
+    <Routes>
+            <Route path="/" element={<Recipes/>}/>
+            <Route path="/create" element={<RecipeForm/>}/>
+            <Route path="/recipe/:recipeId/edit" element={<RecipeForm/>}/>
+            <Route path="/recipe/:recipeId" element={<RecipeView/>}/>
+    </Routes>
     </div>
   );
 }

@@ -32,6 +32,12 @@ resource "aws_dynamodb_table" "recipe-dynamodb-table" {
     type = "S"
   }
   global_secondary_index {
+    name               = "recipeIdIndex"
+    hash_key           = "recipeId"
+    range_key          = "userId"
+    projection_type    = "ALL"
+  }
+  global_secondary_index {
     name               = "UserIdIndex"
     hash_key           = "userId"
     range_key          = "recipeId"
@@ -73,7 +79,13 @@ module "create_recipe_lambda" {
   lambda_name = "createrecipe-lambda"
   handler_path = "index.handler"
 }
-
+module "get_recipes_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getRecipes"
+  output_path = "${path.module}/getRecipes.zip"
+  lambda_name = "get-recipes-lambda"
+  handler_path = "index.handler"
+}
 
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
@@ -138,13 +150,27 @@ resource "aws_cloudwatch_log_group" "api_gw_stage" {
 # }
 
 module "create_recipe_api" {
-  permission_name = "get-list"
+  permission_name = "create-recipe"
   source = "./api_endpoint_module"
   gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
   route="create-recipe"
   method="POST"
   lambda_arn = module.create_recipe_lambda.lambda_arn
   lambda_function_name = module.create_recipe_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get_recipes_api" {
+  permission_name = "get-recipes"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-recipes"
+  method="GET"
+  lambda_arn = module.get_recipes_lambda.lambda_arn
+  lambda_function_name = module.get_recipes_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "NONE"
