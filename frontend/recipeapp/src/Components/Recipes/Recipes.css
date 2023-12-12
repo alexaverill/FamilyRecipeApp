@@ -1,0 +1,34 @@
+.recipeHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.addRecipeButton {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    background: #DD3F65;
+    color: white;
+    text-decoration: none;
+}
+
+.addRecipeButton:hover {
+    color: lightgray;
+    background-color: #b73755;
+}
+
+.search-and-add {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.recipeGrid {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 1.5rem 2.5rem;
+    flex-wrap: wrap;
+}

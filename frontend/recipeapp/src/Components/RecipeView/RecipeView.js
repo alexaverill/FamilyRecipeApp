@@ -1,22 +1,31 @@
+import { useEffect,useState } from "react";
 import { Link, useLocation } from "react-router-dom"
 
 export default function RecipeView(){
     const location = useLocation();
+    const [instructions,setInstructions] = useState([]);
+    const [ingredients,setIngredients] = useState([]);
     let recipe = location.state.recipe;
-    let instructions = location.state.recipe.instructions;
-    let ingredients = location.state.recipe.ingredients;
+    // let instructions = location.state.recipe.instructions;
+    // let ingredients = location.state.recipe.ingredients;
     let displayInstructions = instructions.map((instruction)=>{
-        <div>{instruction}</div>
+        
+        return <div>{instruction}</div>
     });
     let displayIngredients = ingredients.map((ingredient)=>{
-        <div>{ingredient}</div>
+        return <div>{ingredient}</div>
     })
+    useEffect(()=>{
+        console.log(recipe);
+        setIngredients(recipe.ingredients);
+        setInstructions(recipe.instructions);
+    },[recipe]);
     return (
-        <>
+        <div className="content">
             <div className='recipes'>
                 <div className="titleRow">
                     <h1>{recipe.title}</h1>
-                    <Link to={'edit'}>Edit</Link>
+                    <Link to={'edit'} state={recipe}>Edit</Link>
                 </div>
                 <div className='leftAlign descriptionRow'>
                     {recipe.description}
@@ -40,6 +49,6 @@ export default function RecipeView(){
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

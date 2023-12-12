@@ -1,0 +1,53 @@
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    min-height: 56px;
+    background-color: #227C88;
+    padding: .1rem 1.5rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.title {
+    color: #FFF;
+    font-family: Poppins;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.title > a {
+    text-decoration: none;
+    color:#FFF;
+}
+.title > a:hover{
+    color:lightgray;
+}
+
+.links {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    color: #FFF;
+
+}
+.links > a{
+    font-family: Poppins;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    color:white;
+    text-decoration: none;
+}
+.links > a:hover{
+    color:lightgray;
+}

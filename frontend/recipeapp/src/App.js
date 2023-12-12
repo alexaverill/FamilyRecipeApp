@@ -6,29 +6,11 @@ import RecipeForm from './Components/RecipeForm/RecipeForm';
 import { Route, Routes } from 'react-router-dom';
 import Recipes from './Components/Recipes/Recipes';
 import RecipeView from './Components/RecipeView/RecipeView';
+import NavBar from './Components/Navbar/Navbar';
 function App() {
   return (
     <div className="App">
-    <AppBar position="static">
-    <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              minHeight:'2rem'
-            }}
-          >
-            LOGO
-          </Typography>
-    </AppBar>
+    <NavBar/>
     <Routes>
             <Route path="/" element={<Recipes/>}/>
             <Route path="/create" element={<RecipeForm/>}/>

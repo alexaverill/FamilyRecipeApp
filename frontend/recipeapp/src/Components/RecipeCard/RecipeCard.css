@@ -1,0 +1,57 @@
+.card {
+    display: flex;
+    flex-direction: row;
+    background-color: hsba(0, 0%, 100%, 1);
+    width: 37.5rem; 
+    border-radius: 0.5rem;
+    border: 1px solid #EDEDED;
+    text-decoration: none;
+}
+.card:hover{
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.card-img {
+    min-width: 20%;
+    background-color: red;
+}
+
+.card-content {
+    display: flex;
+    padding: 1rem;
+    flex:1 0 0;
+    justify-content: space-between;
+}
+
+.seperator {
+    align-self: center;
+
+}
+
+.subtitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: .5rem;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.card-title {
+    color: black;
+    font-family: Poppins;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1rem;
+}
+
+.card-desc {
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+}

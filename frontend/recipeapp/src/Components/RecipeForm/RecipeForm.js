@@ -5,14 +5,28 @@ import Item from '@mui/material'
 import Stack from '@mui/material/Stack';
 import './RecipeForm.css'
 import EditableText from '../EditableText/EditableText';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 export default function RecipeForm() {
+    const location = useLocation();
     const [recipeId,setRecipeId] = useState(null);
     const [title,setTitle] = useState('Title');
     const [description, setDescription] = useState('Description');
     
     const [ingredients, setIngredients] = useState(['']);
-    const [instructions, setInstructions] = useState([''])
+    const [instructions, setInstructions] = useState(['']);
+
+    useEffect(()=>{
+        if(location.state){
+            console.log("A recipe was injected!")
+            let recipe = location.state;
+            setRecipeId(recipe.recipeId);
+            setTitle(recipe.title);
+            setDescription(recipe.description);
+            setIngredients(recipe.ingredients);
+            setInstructions(recipe.instructions);
+        }
+    },[]);
     const handleIngredientEnter = (event) => {
         if (event.key === "Enter") {
             setIngredients([...ingredients, '']);
@@ -104,7 +118,7 @@ export default function RecipeForm() {
         
     }
     return (
-        <Container>
+        <div className="content">
             <div className='recipes'>
                 <div className="titleRow">
                     <h1><EditableText initialText="Title" onChange={(e)=>setTitle(e.target.value)} text={title}/></h1>
@@ -133,6 +147,6 @@ export default function RecipeForm() {
                     </div>
                 </div>
             </div>
-        </Container>
+        </div>
     )
 }
