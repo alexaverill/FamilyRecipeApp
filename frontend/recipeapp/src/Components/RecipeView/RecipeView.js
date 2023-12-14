@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 export default function RecipeView() {
     const {recipeId} = useParams();
     const location = useLocation();
     const [recipe, setRecipe] = useState({});
+    const [isLoading,setIsLoading] = useState(false);
     // let instructions = location.state.recipe.instructions;
     // let ingredients = location.state.recipe.ingredients;
     let displaySteps = recipe.steps?.map((steps) => {
@@ -17,6 +18,7 @@ export default function RecipeView() {
         return <li>{ingredient}</li>
     })
     const loadRecipe = async() =>{
+        setIsLoading(true);
         let url = '/get-recipe/'+recipeId;
         let data = await fetch(process.env.REACT_APP_API_URL + url, {
             method: "GET",
@@ -34,6 +36,7 @@ export default function RecipeView() {
         if (data) {
             setRecipe(data);
         }
+        setIsLoading(false);
     }
     useEffect(() => {
         if (!location.state) {
@@ -42,6 +45,13 @@ export default function RecipeView() {
             setRecipe(location.state.recipe);
         }
     }, []);
+    if(isLoading){
+        return (<div className="content">
+            <div className="twoColumn">
+            <CircularProgress/>
+            </div>
+        </div>)
+    }
     return (
         <div className="content">
             <div className="twoColumn">
