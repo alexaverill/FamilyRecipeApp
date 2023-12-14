@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 import "./Recipes.css";
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import RecipeCard from "../RecipeCard/RecipeCard";
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
+    const [isLoading,setIsLoading] = useState(false);
     useEffect(() => {
         LoadRecipes();
     }, [])
     const LoadRecipes = async () => {
+        setIsLoading(true);
         let url = '/get-recipes'
         let data = await fetch(process.env.REACT_APP_API_URL + url, {
             method: "GET",
@@ -26,6 +28,7 @@ export default function Recipes() {
         if (data) {
             setRecipes(data);
         }
+        setIsLoading(false);
     }
     let recipeDisplay = recipes?.map((recipe) => {
         return <RecipeCard recipe={recipe} />; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
@@ -42,7 +45,7 @@ export default function Recipes() {
                 </div>
             </div>
             <div className="recipeGrid">
-                {recipeDisplay}
+               {isLoading?<CircularProgress />: recipeDisplay}
             </div>
         </div>
     )
