@@ -1,0 +1,69 @@
+
+.titleRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.leftAlign{
+    text-align: left;
+}
+.list{
+    display: flex;
+    flex-direction: column;
+}
+.listEntry{
+    line-height: 3rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.listEntry::before{
+    content: '•';
+}
+.listItem{
+    display:flex;
+    align-items: center;
+    width: 100%;
+}
+.listItem > div{
+    width: 90%;
+}
+
+.numberedList{
+    counter-reset: my-counter;
+ }
+ 
+ .numberedList > div::before {
+    counter-increment: my-counter;
+    content: counter(my-counter) ". ";
+ }
+.entry::before{
+    content: '\2022';
+    font-weight: bold;
+    font-size: larger;
+}
+.entry{
+	text-align: left;
+	display: flex;
+	align-items: center;
+}
+.actions{
+    display: flex;
+    flex-direction: row;
+    max-height: 3rem;
+}
+.filledButton{
+    background: #DD3F65;
+}
+.filledButton:hover{
+    background-color: #b73755;
+    color:lightgray;
+}
+.collections{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+}

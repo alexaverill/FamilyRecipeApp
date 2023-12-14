@@ -1,0 +1,15 @@
+export async function GetCollections(){
+    let url = '/get-collections';
+    return await fetch(process.env.REACT_APP_API_URL + url, {
+        method: "GET",
+        headers: {
+            //'Authorization':`Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+    })
+        .then((response) => response.json())
+        .catch((err) => {
+            console.log(err);
+            console.log(err.message);
+        });
+}

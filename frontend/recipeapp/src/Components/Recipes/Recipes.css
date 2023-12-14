@@ -4,20 +4,6 @@
     justify-content: space-between;
     width: 100%;
 }
-
-.addRecipeButton {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem;
-    background: #DD3F65;
-    color: white;
-    text-decoration: none;
-}
-
-.addRecipeButton:hover {
-    color: lightgray;
-    background-color: #b73755;
-}
-
 .search-and-add {
     display: flex;
     align-items: center;

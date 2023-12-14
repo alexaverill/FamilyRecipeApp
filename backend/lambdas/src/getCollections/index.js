@@ -5,8 +5,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 export const handler = async (event, context) => {
   console.log(event);
   const command =new ScanCommand({
-      TableName:"Recipes",
-      IndexName:"recipeIdIndex",
+      TableName:"RecipeCollections"
   });
   //TODO filter by date/Active
   

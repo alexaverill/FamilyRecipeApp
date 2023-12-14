@@ -38,7 +38,7 @@ export default function Recipes() {
                 </div>
                 <div className="search-and-add">
                     <TextField size="small" label="Search"></TextField>
-                    <Link component="button" to="/create" className="addRecipeButton">Add Recipe</Link>
+                    <Link component="button" to="/create" className="recipeLinkButton">Add Recipe</Link>
                 </div>
             </div>
             <div className="recipeGrid">

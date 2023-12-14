@@ -21,8 +21,6 @@ resource "aws_dynamodb_table" "recipe-dynamodb-table" {
   name           = "Recipes"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "recipeId"
-  range_key      = "userId"
-
   attribute {
     name = "recipeId"
     type = "S"
@@ -41,6 +39,29 @@ resource "aws_dynamodb_table" "recipe-dynamodb-table" {
     name               = "UserIdIndex"
     hash_key           = "userId"
     range_key          = "recipeId"
+    projection_type    = "ALL"
+  }
+  tags = {
+    Name        = "recipe-app-table"
+
+  }
+}
+resource "aws_dynamodb_table" "recipe-collections-dynamodb-table" {
+  name           = "RecipeCollections"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "collectionId"
+  attribute {
+    name = "collectionId"
+    type = "S"
+  }
+  attribute {
+    name = "collectionName"
+    type = "S"
+  }
+  global_secondary_index {
+    name               = "collectionIdIndex"
+    hash_key           = "collectionId"
+    range_key          = "collectionName"
     projection_type    = "ALL"
   }
   tags = {
@@ -86,7 +107,27 @@ module "get_recipes_lambda" {
   lambda_name = "get-recipes-lambda"
   handler_path = "index.handler"
 }
-
+module "get_recipe_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getRecipe"
+  output_path = "${path.module}/getRecipe.zip"
+  lambda_name = "get-recipe-lambda"
+  handler_path = "index.handler"
+}
+module "create_collection_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/createCollection"
+  output_path = "${path.module}/createCollection.zip"
+  lambda_name = "create-collection-lambda"
+  handler_path = "index.handler"
+}
+module "get_collections_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getCollections"
+  output_path = "${path.module}/getCollections.zip"
+  lambda_name = "get-collections-lambda"
+  handler_path = "index.handler"
+}
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
   name          = "RecipeAppsGateway"
@@ -163,6 +204,34 @@ module "create_recipe_api" {
   authorizer_id = ""
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
+module "create_collection_api" {
+  permission_name = "create-collection"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="create-collection"
+  method="POST"
+  lambda_arn = module.create_collection_lambda.lambda_arn
+  lambda_function_name = module.create_collection_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get_collections_api" {
+  permission_name = "get-collections"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-collections"
+  method="GET"
+  lambda_arn = module.get_collections_lambda.lambda_arn
+  lambda_function_name = module.get_collections_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
 module "get_recipes_api" {
   permission_name = "get-recipes"
   source = "./api_endpoint_module"
@@ -171,6 +240,20 @@ module "get_recipes_api" {
   method="GET"
   lambda_arn = module.get_recipes_lambda.lambda_arn
   lambda_function_name = module.get_recipes_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get_recipe_api" {
+  permission_name = "get-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-recipe/{recipeId+}"
+  method="GET"
+  lambda_arn = module.get_recipe_lambda.lambda_arn
+  lambda_function_name = module.get_recipe_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "NONE"

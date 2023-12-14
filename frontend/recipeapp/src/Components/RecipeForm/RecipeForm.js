@@ -1,32 +1,40 @@
 import { Button, Container } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Unstable_Grid2';
-import Item from '@mui/material'
-import Stack from '@mui/material/Stack';
-import './RecipeForm.css'
+import LoadingButton from '@mui/lab/LoadingButton';
+import classes from './RecipeForm.module.css'
 import EditableText from '../EditableText/EditableText';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import CollectionRow from '../CollectionRow/CollectionRow';
 export default function RecipeForm() {
     const location = useLocation();
-    const [recipeId,setRecipeId] = useState(null);
-    const [title,setTitle] = useState('Title');
+    const [recipeId, setRecipeId] = useState(null);
+    const [title, setTitle] = useState('Title');
     const [description, setDescription] = useState('Description');
-    
+    const [parentId,setParentId] = useState(null);
     const [ingredients, setIngredients] = useState(['']);
-    const [instructions, setInstructions] = useState(['']);
-
-    useEffect(()=>{
-        if(location.state){
-            console.log("A recipe was injected!")
-            let recipe = location.state;
+    const [steps, setSteps] = useState(['']);
+    const [collections,setCollections] = useState([]);
+    const [isLoading,setIsLoading] = useState(false);
+    const [alert,setAlert] = useState({type:'success',visible:false,message:''});
+    useEffect(() => {
+        if (location.state) {
+            let recipe = location.state.recipe;
+            console.log(location.state);
+            if(location.state.variation){
+                console.log("Is Variation"+recipe.recipeId);
+                setParentId(recipe.recipeId);
+                delete recipe.recipeId; 
+            }
             setRecipeId(recipe.recipeId);
             setTitle(recipe.title);
             setDescription(recipe.description);
             setIngredients(recipe.ingredients);
-            setInstructions(recipe.instructions);
+            setSteps(recipe.steps);
+            setCollections(recipe.collections);
         }
-    },[]);
+    }, [location.state]);
     const handleIngredientEnter = (event) => {
         if (event.key === "Enter") {
             setIngredients([...ingredients, '']);
@@ -48,102 +56,139 @@ export default function RecipeForm() {
     let ingredientDisplay = ingredients.map((ingredient, index) => {
         var isLast = index === ingredients.length - 1 && index > 0;
         if (isLast) {
-            return <div className='entry'>
+            return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)} autoFocus></TextField>
-                <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>
+                <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button></div>
             </div>
         }
-        return <div className='entry'>
+        return <div className={classes.listEntry}><div className={classes.listItem}>
             <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)}></TextField>
-            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>}
+            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>}</div>
+            
         </div>
     });
-    const removeInstructions = (index) => {
-        instructions.splice(index, 1)
-        setInstructions([...instructions]);
+    const removeStep = (index) => {
+        steps.splice(index, 1);
+        if (steps.length == 0) {
+            setSteps(['']);
+            return;
+        }
+        setSteps([...steps]);
     }
-    const handleInstructionEnter = (event) => {
+    const handleStepsEnter = (event) => {
         if (event.key === "Enter") {
-            setInstructions([...instructions, '']);
+            setSteps([...steps, '']);
         }
     }
-    const setInstructionChanged = (index, value) => {
+    const setStepsChanged = (index, value) => {
 
-        instructions.splice(index, 1, value);
-        setInstructions([...instructions]);
+        steps.splice(index, 1, value);
+        setSteps([...steps]);
     }
-    let instructionDisplay = instructions.map((instruction, index) => {
-        var isLast = index === instructions.length - 1 && index > 0;
-        if (isLast) {
-            return <div className='entry'>
 
-                <TextField size='small' value={instruction} onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)} autoFocus></TextField>
+    let instructionDisplay = steps.map((step, index) => {
+        var isLast = index === steps.length - 1 && index > 0;
+        if (isLast) {
+            return <div className={classes.listEntry}><div className={classes.listItem}>
+
+                <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)} autoFocus></TextField>
+                <Button onClick={() => { removeStep(index, step) }}>X</Button></div>
             </div>
         }
-        return <div className='entry'>
-            <TextField size='small' value={instruction} onKeyDown={handleInstructionEnter} onChange={(e) => setInstructionChanged(index, e.target.value)}></TextField>
+        return <div className={classes.listEntry}><div className={classes.listItem}>
+            <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)}></TextField>
+            {index === 0 ? <></> : <Button onClick={() => { removeStep(index, step) }}>X</Button>}</div>
         </div>
     });
-    const handleSave = async ()=>{
+    const handleSave = async () => {
+        setIsLoading(true);
+        let cleanedCollections= collections.map(collection=>{
+            if(collection.name != undefined || collection.name != null){
+                return {name:collection.name,collectionId:collection.collectionId};
+            }
+        });
         let eventObj = {
-            userId:123,
+            userId: 123,
             recipeId,
+            parentId,
             title,
             description,
             ingredients,
-            instructions
+            collections:cleanedCollections,
+            steps
         };
         console.log(eventObj);
-        let url='/create-recipe'
-        let data = await fetch(process.env.REACT_APP_API_URL+url, {
+        
+        let url = '/create-recipe'
+        let data = await fetch(process.env.REACT_APP_API_URL + url, {
             method: "POST",
-            headers:{
-             //'Authorization':`Bearer ${token}`,
-             "Content-Type": "application/json",
+            headers: {
+                //'Authorization':`Bearer ${token}`,
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(eventObj),
-            })
+        })
             .then((response) => response.json())
             .catch((err) => {
                 console.log(err);
-               console.log(err.message);
-            });  
+                console.log(err.message);
+            });
         console.log(data);
-        if(data){
+        if (data) {
             setRecipeId(data.recipeId);
+            setAlert({
+                visible:true,
+                type:"success",
+                message:"Successfully saved recipe"
+            });
+            
+        }else{
+            setAlert({
+                visible:true,
+                type:"error",
+                message:"Error saving recipe."
+            })
         }
+        setTimeout(()=>setAlert({visible:false}),5000);
+        setIsLoading(false);
     }
-    const handlePublish = ()=>{
-        
+    const addCollection = (collection) => {
+        setCollections([...collections,collection])
     }
+    let collectionList = collections?.map((collection)=><div>{collection.name}</div>);
     return (
         <div className="content">
-            <div className='recipes'>
-                <div className="titleRow">
-                    <h1><EditableText initialText="Title" onChange={(e)=>setTitle(e.target.value)} text={title}/></h1>
-                    <Button onClick={handleSave}>Save</Button>
-                    <Button onClick={handlePublish}>Publish</Button>
-                </div>
-                <div className='leftAlign descriptionRow'>
-                    <EditableText initialText="Description" onChange={(e)=>setDescription(e.target.value)} text={description}/>
-                </div>
-                <div className='leftAlign'>
-                    Pairs
-                </div>
-                <div className='leftAlign'>
-                    Tags
-                </div>
-                <div>
-                    <h2>Ingredients</h2>
-                    <div className='list'>
-                        {ingredientDisplay}
+            {alert.visible?
+            <Alert variant="outlined" severity={alert.type} onClose={() => {setAlert({visible:false})}}>
+                {alert.message}
+            </Alert>:<></>}
+            <div className='twoColumn'>
+                <div><img src="/placeholder_1.png" /></div>
+                <div className='recipes'>
+                    <div className={classes.titleRow}>
+                        <div className='recipeTitle'><EditableText initialText="Title" onChange={(e) => setTitle(e.target.value)} text={title} /></div>
+                        <div className={classes.actions}>                            
+                            <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton}>Save</LoadingButton>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <h2>Instructions</h2>
-                    <div className='list'>
-                        {instructionDisplay}
+                    <div className='leftAlign descriptionRow'>
+                        <EditableText initialText="Description" onChange={(e) => setDescription(e.target.value)} text={description} />
+                    </div>
+                    <div className={classes.collections}>
+                      {collectionList}<CollectionRow collectionAdded={addCollection}/>
+                    </div>
+                    <div>
+                        <h2>Ingredients</h2>
+                        <div className='list'>
+                            {ingredientDisplay}
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Steps</h2>
+                        <div className={classes.numberedList}>
+                            {instructionDisplay}
+                        </div>
                     </div>
                 </div>
             </div>

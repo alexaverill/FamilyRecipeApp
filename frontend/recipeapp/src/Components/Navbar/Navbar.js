@@ -7,7 +7,7 @@ export default function NavBar(){
         <div class="title"><Link to="/">Family Recipe App</Link></div>
         <div class="links">
             <Link>Cookbook</Link>
-            <Link>Collections</Link>
+            <Link to='/collections'>Collections</Link>
         </div>
         </div>
         <div class="links">

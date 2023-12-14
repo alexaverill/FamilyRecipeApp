@@ -1,0 +1,19 @@
+.titleRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.actions{
+    display: flex;
+    flex-direction: row;
+}
+.list > li{
+    line-height: 2.5rem;
+}
+.editLink{
+    display:flex;
+    align-items: center;
+}
+.editImg {
+    height: .75rem;
+}

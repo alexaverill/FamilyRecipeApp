@@ -14,3 +14,45 @@ code {
   width:90%;
   margin: 0 auto;
 }
+.twoColumn{
+  display:flex;
+  flex:1 0 0;
+  gap: 1.5rem;
+  margin:4rem auto;
+  width:75vw;
+}
+.recipes{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width:100%;
+}
+.recipeTitle{
+  font-size: 1.5rem;
+font-style: normal;
+font-weight: 700; 
+}
+.recipeLinkButton {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  background: #DD3F65;
+  color: white;
+  text-decoration: none;
+}
+
+.recipeLinkButton:hover {
+  color: lightgray;
+  background-color: #b73755;
+}
+.recipeLinkButton {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  background: #DD3F65;
+  color: white;
+  text-decoration: none;
+}
+
+.recipeLinkButton:hover {
+  color: lightgray;
+  background-color: #b73755;
+}
