@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CollectionRow from '../CollectionRow/CollectionRow';
+import { AddToCollection } from '../../API/CollectionApi';
 export default function RecipeForm() {
     const location = useLocation();
     const [recipeId, setRecipeId] = useState(null);
@@ -115,7 +116,6 @@ export default function RecipeForm() {
             title,
             description,
             ingredients,
-            collections:cleanedCollections,
             steps
         };
         console.log(eventObj);
@@ -153,8 +153,16 @@ export default function RecipeForm() {
         setTimeout(()=>setAlert({visible:false}),5000);
         setIsLoading(false);
     }
-    const addCollection = (collection) => {
+    const addCollection = async (collection) => {
+        let collectionObj = {collectionId:collection.collectionId,name:collection.name};
+        let recipeObj = {recipeId,title};
+        console.log(recipeObj);
+        await AddToCollection(recipeObj,collectionObj)
+        if(collections){
         setCollections([...collections,collection])
+        }else{
+            setCollections([collection])
+        }
     }
     let collectionList = collections?.map((collection)=><div>{collection.name}</div>);
     return (

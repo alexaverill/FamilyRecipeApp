@@ -128,6 +128,13 @@ module "get_collections_lambda" {
   lambda_name = "get-collections-lambda"
   handler_path = "index.handler"
 }
+module "add_to_collections_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/addToCollection"
+  output_path = "${path.module}/addToCollection.zip"
+  lambda_name = "add-to-collections-lambda"
+  handler_path = "index.handler"
+}
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
   name          = "RecipeAppsGateway"
@@ -226,6 +233,20 @@ module "get_collections_api" {
   method="GET"
   lambda_arn = module.get_collections_lambda.lambda_arn
   lambda_function_name = module.get_collections_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "add_to_collections_api" {
+  permission_name = "get-collections"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="add-to-collections"
+  method="POST"
+  lambda_arn = module.add_to_collections_lambda.lambda_arn
+  lambda_function_name = module.add_to_collections_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "NONE"
