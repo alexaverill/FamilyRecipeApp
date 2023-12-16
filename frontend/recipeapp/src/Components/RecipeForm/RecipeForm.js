@@ -1,32 +1,34 @@
-import { Button, Container } from '@mui/material';
+import { Button, Chip, Container, collapseClasses } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import classes from './RecipeForm.module.css'
 import EditableText from '../EditableText/EditableText';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CollectionRow from '../CollectionRow/CollectionRow';
-import { AddToCollection } from '../../API/CollectionApi';
+import { AddToCollection, RemoveFromCollection } from '../../API/CollectionApi';
+import { UserContext } from '../UserContext/UserContext';
 export default function RecipeForm() {
     const location = useLocation();
     const [recipeId, setRecipeId] = useState(null);
     const [title, setTitle] = useState('Title');
     const [description, setDescription] = useState('Description');
-    const [parentId,setParentId] = useState(null);
+    const [parentId, setParentId] = useState(null);
     const [ingredients, setIngredients] = useState(['']);
     const [steps, setSteps] = useState(['']);
-    const [collections,setCollections] = useState([]);
-    const [isLoading,setIsLoading] = useState(false);
-    const [alert,setAlert] = useState({type:'success',visible:false,message:''});
+    const [collections, setCollections] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [alert, setAlert] = useState({ type: 'success', visible: false, message: '' });
+    const {user} = useContext(UserContext);
     useEffect(() => {
         if (location.state) {
             let recipe = location.state.recipe;
             console.log(location.state);
-            if(location.state.variation){
-                console.log("Is Variation"+recipe.recipeId);
+            if (location.state.variation) {
+                console.log("Is Variation" + recipe.recipeId);
                 setParentId(recipe.recipeId);
-                delete recipe.recipeId; 
+                delete recipe.recipeId;
             }
             setRecipeId(recipe.recipeId);
             setTitle(recipe.title);
@@ -66,7 +68,7 @@ export default function RecipeForm() {
         return <div className={classes.listEntry}><div className={classes.listItem}>
             <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)}></TextField>
             {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>}</div>
-            
+
         </div>
     });
     const removeStep = (index) => {
@@ -104,22 +106,23 @@ export default function RecipeForm() {
     });
     const handleSave = async () => {
         setIsLoading(true);
-        let cleanedCollections= collections.map(collection=>{
-            if(collection.name != undefined || collection.name != null){
-                return {name:collection.name,collectionId:collection.collectionId};
+        let cleanedCollections = collections.map(collection => {
+            if (collection.name != undefined || collection.name != null) {
+                return { name: collection.name, collectionId: collection.collectionId };
             }
         });
         let eventObj = {
-            userId: 123,
+            userId: user.userId,
             recipeId,
             parentId,
             title,
             description,
             ingredients,
-            steps
+            steps,
+            user
         };
         console.log(eventObj);
-        
+
         let url = '/create-recipe'
         let data = await fetch(process.env.REACT_APP_API_URL + url, {
             method: "POST",
@@ -138,45 +141,47 @@ export default function RecipeForm() {
         if (data) {
             setRecipeId(data.recipeId);
             setAlert({
-                visible:true,
-                type:"success",
-                message:"Successfully saved recipe"
+                visible: true,
+                type: "success",
+                message: "Successfully saved recipe"
             });
-            
-        }else{
+
+        } else {
             setAlert({
-                visible:true,
-                type:"error",
-                message:"Error saving recipe."
+                visible: true,
+                type: "error",
+                message: "Error saving recipe."
             })
         }
-        setTimeout(()=>setAlert({visible:false}),5000);
+        setTimeout(() => setAlert({ visible: false }), 5000);
         setIsLoading(false);
     }
-    const addCollection = async (collection) => {
-        let collectionObj = {collectionId:collection.collectionId,name:collection.name};
-        let recipeObj = {recipeId,title};
+
+    const handleDelete = async (collectionId, name) => {
+        console.log(collectionId);
+        let collectionObj = { collectionId, name };
+        let recipeObj = { recipeId, title };
         console.log(recipeObj);
-        await AddToCollection(recipeObj,collectionObj)
-        if(collections){
-        setCollections([...collections,collection])
-        }else{
-            setCollections([collection])
-        }
+        await RemoveFromCollection(recipeObj, collectionObj)
+        collections.splice(collections.findIndex(c => c.collectionId == collectionId), 1);
+        setCollections([...collections])
     }
-    let collectionList = collections?.map((collection)=><div>{collection.name}</div>);
+    let collectionList = collections?.map((collection) => {
+        return <Chip label={collection.name} onDelete={() => handleDelete(collection.collectionId)} />;
+    }
+    );
     return (
         <div className="content">
-            {alert.visible?
-            <Alert variant="outlined" severity={alert.type} onClose={() => {setAlert({visible:false})}}>
-                {alert.message}
-            </Alert>:<></>}
+            {alert.visible ?
+                <Alert variant="outlined" severity={alert.type} onClose={() => { setAlert({ visible: false }) }}>
+                    {alert.message}
+                </Alert> : <></>}
             <div className='twoColumn'>
                 <div><img src="/placeholder_1.png" /></div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
                         <div className='recipeTitle'><EditableText initialText="Title" onChange={(e) => setTitle(e.target.value)} text={title} /></div>
-                        <div className={classes.actions}>                            
+                        <div className={classes.actions}>
                             <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton}>Save</LoadingButton>
                         </div>
                     </div>
@@ -184,7 +189,7 @@ export default function RecipeForm() {
                         <EditableText initialText="Description" onChange={(e) => setDescription(e.target.value)} text={description} />
                     </div>
                     <div className={classes.collections}>
-                      {collectionList}<CollectionRow collectionAdded={addCollection}/>
+                        {collectionList}
                     </div>
                     <div>
                         <h2>Ingredients</h2>

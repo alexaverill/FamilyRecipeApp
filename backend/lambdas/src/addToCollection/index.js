@@ -28,7 +28,7 @@ export const handler = async (event, context) => {
       recipe.collections = [collection];
       updateRecipe(recipe);
     }else{
-      if(!recipe.collections.find(collection=>collection.collectionId === collection.collectionId)){
+      if(!recipe.collections.find(col=>col.collectionId === collection.collectionId)){
         recipe.collections.push(collection);
         updateRecipe(recipe);
       }
@@ -52,11 +52,8 @@ export const handler = async (event, context) => {
       if(!collectionItem.recipes){
         let recipes = [{recipeId:parsedRecipe.recipeId,title:parsedRecipe.title}];
         collectionItem.recipes = recipes;
-        console.log("r")
-        console.log(recipes);
         updateCollection(collectionItem);
       }else{
-        console.log(collectionItem.recipes.find(recipe=>recipe.recipeId == parsedRecipe.recipeId));
         if(!collectionItem.recipes.find(recipe=>recipe.recipeId == parsedRecipe.recipeId)){
          collectionItem.recipes.push({recipeId:parsedRecipe.recipeId,title:parsedRecipe.title})
          console.log("Updating Collection");

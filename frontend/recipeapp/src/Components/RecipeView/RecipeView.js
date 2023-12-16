@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress,Chip } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
+import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
+import CollectionRow from "../CollectionRow/CollectionRow";
 export default function RecipeView() {
     const {recipeId} = useParams();
     const location = useLocation();
     const [recipe, setRecipe] = useState({});
     const [isLoading,setIsLoading] = useState(false);
+    const [collections,setCollections] = useState([]);
     // let instructions = location.state.recipe.instructions;
     // let ingredients = location.state.recipe.ingredients;
     let displaySteps = recipe.steps?.map((steps) => {
@@ -35,6 +38,7 @@ export default function RecipeView() {
         console.log(data);
         if (data) {
             setRecipe(data);
+            setCollections(data.collections)
         }
         setIsLoading(false);
     }
@@ -43,6 +47,7 @@ export default function RecipeView() {
             loadRecipe();
         } else {
             setRecipe(location.state.recipe);
+            setCollections(location.state.recipe.collections);
         }
     }, []);
     if(isLoading){
@@ -52,6 +57,27 @@ export default function RecipeView() {
             </div>
         </div>)
     }
+    const handleDelete = async (collectionId, name) => {
+        console.log(collectionId);
+        let collectionObj = { collectionId, name };
+        let recipeObj = { recipeId:recipe.recipeId, title:recipe.title };
+        await RemoveFromCollection(recipeObj, collectionObj)
+        collections.splice(collections.findIndex(c => c.collectionId == collectionId), 1);
+        setCollections([...collections]);
+    }
+    const addCollection = async (collection) => {
+        if(collections.find(col=>col.collectionId === collection.collectionId)){
+            return;
+        }
+        let collectionObj = { collectionId: collection.collectionId, name: collection.name };
+        let recipeObj = { recipeId:recipe.recipeId, title:recipe.title };
+        await AddToCollection(recipeObj, collectionObj)
+        setCollections([...collections,collectionObj]);
+    }
+    let collectionList = collections?.map((collection) => {
+        return <Chip label={collection.name} onDelete={() => handleDelete(collection.collectionId)} />;
+    }
+    );
     return (
         <div className="content">
             <div className="twoColumn">
@@ -69,8 +95,8 @@ export default function RecipeView() {
                     <div className='leftAlign descriptionRow'>
                         {recipe.description}
                     </div>
-                    <div className='leftAlign'>
-                        Tags
+                    <div className={classes.collections}>
+                        {collectionList} <CollectionRow collectionAdded={addCollection} />
                     </div>
                     <div>
                         <h2>Ingredients</h2>

@@ -17,3 +17,10 @@
 .editImg {
     height: .75rem;
 }
+.collections{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+}

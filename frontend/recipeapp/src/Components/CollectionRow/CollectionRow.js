@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { GetCollections } from "../../API/CollectionApi";
-
+import { Button } from "@mui/material";
+import classes from './CollectionRow.module.css'
 const filter = createFilterOptions();
 export default function CollectionRow({ collectionAdded }) {
     const [collections, setCollections] = useState([]);
     const [value, setValue] = useState(null);
+    const [inEdit,setInEdit] = useState(false);
     useEffect(() => {
         LoadCollections();
     }, [])
@@ -38,7 +40,12 @@ export default function CollectionRow({ collectionAdded }) {
             setValue(null);
         }
     }
+    if(!inEdit){
+        return <Button onClick={()=>setInEdit(true)}>+</Button>
+    }
+
     return (
+        <div className={classes.entry}>
         <Autocomplete
             value={value}
             onChange={(event, newValue) => {
@@ -92,6 +99,8 @@ export default function CollectionRow({ collectionAdded }) {
                 <TextField {...params} label="Add Collection" size="small"/>
             )}
         />
+        <Button onClick={()=>setInEdit(false)}>X</Button>
+        </div>
     );
 
 }

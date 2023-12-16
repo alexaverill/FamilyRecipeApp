@@ -9,18 +9,28 @@ import RecipeView from './Components/RecipeView/RecipeView';
 import NavBar from './Components/Navbar/Navbar';
 import Collections from './Components/Collections/Collections';
 import CollectionsView from './Components/CollectionView/CollectionView';
+import Login from './Components/Login/Login';
+import { UserContextProvider } from './Components/UserContext/UserContext';
+import AuthRoute from './Components/AuthRoute/AuthRoute';
 function App() {
   return (
     <div className="App">
-    <NavBar/>
-    <Routes>
-            <Route path="/" element={<Recipes/>}/>
-            <Route path="/create" element={<RecipeForm/>}/>
-            <Route path="/collections" element={<Collections/>}/>
-            <Route path="/collections/:collectionId" element={<CollectionsView/>}/>
-            <Route path="/recipe/:recipeId/edit" element={<RecipeForm/>}/>
-            <Route path="/recipe/:recipeId" element={<RecipeView/>}/>
-    </Routes>
+      <UserContextProvider>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={
+            <AuthRoute>
+              <Recipes />
+            </AuthRoute>
+          } />
+          <Route path="/login" element={<Login />} />
+          <Route path="/create" element={<AuthRoute><RecipeForm /></AuthRoute>} />
+          <Route path="/collections" element={<AuthRoute><Collections /></AuthRoute>} />
+          <Route path="/collections/:collectionId" element={<AuthRoute><CollectionsView /></AuthRoute>} />
+          <Route path="/recipe/:recipeId/edit" element={<AuthRoute><RecipeForm /></AuthRoute>} />
+          <Route path="/recipe/:recipeId" element={<AuthRoute><RecipeView /></AuthRoute>} />
+        </Routes>
+      </UserContextProvider>
     </div>
   );
 }

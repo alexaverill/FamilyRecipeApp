@@ -3,8 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
-
+import { Amplify } from 'aws-amplify';
+import { BrowserRouter } from "react-router-dom";
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolClientId: process.env.REACT_APP_POOL_CLIENT_ID,
+      userPoolId: process.env.REACT_APP_USERPOOL_ID
+    },
+  },
+});
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
