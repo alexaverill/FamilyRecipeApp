@@ -1,0 +1,10 @@
+.editRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .5rem;
+}
+
+.editImg {
+    height: .75rem;
+}

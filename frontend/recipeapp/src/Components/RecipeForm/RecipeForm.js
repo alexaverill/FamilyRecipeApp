@@ -9,6 +9,8 @@ import Alert from '@mui/material/Alert';
 import CollectionRow from '../CollectionRow/CollectionRow';
 import { AddToCollection, RemoveFromCollection } from '../../API/CollectionApi';
 import { UserContext } from '../UserContext/UserContext';
+import EditableTextArea from '../EditableTextArea/EditableTextArea';
+
 export default function RecipeForm() {
     const location = useLocation();
     const [recipeId, setRecipeId] = useState(null);
@@ -186,7 +188,8 @@ export default function RecipeForm() {
                         </div>
                     </div>
                     <div className='leftAlign descriptionRow'>
-                        <EditableText initialText="Description" onChange={(e) => setDescription(e.target.value)} text={description} />
+                        <EditableTextArea initialText="Description" onChange={(e) => setDescription(e.target.value)} text={description} />
+                        
                     </div>
                     <div className={classes.collections}>
                         {collectionList}

@@ -16,8 +16,10 @@
     width: 100%;
 }
 .card:hover{
-    background-color: lightgray;
     cursor: pointer;
+    border-radius: 0.5rem;
+    border: 1px solid #EDEDED;
+    background: #F6F6F6;
 }
 
 .cardImg {
