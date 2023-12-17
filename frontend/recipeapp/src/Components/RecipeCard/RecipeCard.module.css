@@ -1,3 +1,6 @@
+.cardContainer{
+    display:flex;
+}
 .card {
     display: flex;
     flex-direction: row;
@@ -6,6 +9,11 @@
     border-radius: 0.5rem;
     border: 1px solid #EDEDED;
     text-decoration: none;
+    min-height: 110px;
+}
+.clickableCard{
+    display:flex;
+    width: 100%;
 }
 .card:hover{
     background-color: lightgray;
@@ -54,4 +62,8 @@
     font-size: 0.75rem;
     font-style: normal;
     font-weight: 400;
+}
+.collections{
+    gap:.5rem;
+    display: flex;
 }

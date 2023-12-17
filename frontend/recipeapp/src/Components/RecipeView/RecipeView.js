@@ -81,11 +81,11 @@ export default function RecipeView() {
     return (
         <div className="content">
             <div className="twoColumn">
-                <div><img src="/placeholder_1.png" /></div>
+                <div className={classes.image}><img src="/placeholder_1.png" /></div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
                         <div className="recipeTitle">{recipe.title}</div>
-                        <div class={classes.actions}>
+                        <div className={classes.actions}>
                             <Link component="button" className={classes.editLink} to={'edit'} state={{recipe}}><img className={classes.editImg} src="/edit.png" /></Link>
                             <Button><img src="/download.png" /></Button>
                             <FavoriteButton />

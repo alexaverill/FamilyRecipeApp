@@ -56,3 +56,9 @@ font-weight: 700;
   color: lightgray;
   background-color: #b73755;
 }
+@media (max-width:400px) {
+  .twoColumn{
+    display:flex;
+    flex-direction: column;
+  }
+}

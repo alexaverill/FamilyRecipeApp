@@ -156,6 +156,27 @@ module "remove_from_collections_lambda" {
   lambda_name = "remove-from-collections-lambda"
   handler_path = "index.handler"
 }
+module "add_favorite_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/addFavorite"
+  output_path = "${path.module}/addFavorite.zip"
+  lambda_name = "add-favorite-lambda"
+  handler_path = "index.handler"
+}
+module "get_favorite_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getFavorites"
+  output_path = "${path.module}/getFavorites.zip"
+  lambda_name = "get-favorites-lambda"
+  handler_path = "index.handler"
+}
+module "remove_favorite_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/removeFavorite"
+  output_path = "${path.module}/removeFavorites.zip"
+  lambda_name = "remove-favorite-lambda"
+  handler_path = "index.handler"
+}
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
   name          = "RecipeAppsGateway"
@@ -338,6 +359,48 @@ module "query_recipe_api" {
   method="POST"
   lambda_arn = module.query_recipe_lambda.lambda_arn
   lambda_function_name = module.query_recipe_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "add_favorite" {
+  permission_name = "favorite-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="add-favorite"
+  method="POST"
+  lambda_arn = module.add_favorite_lambda.lambda_arn
+  lambda_function_name = module.add_favorite_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get_favorites" {
+  permission_name = "favorite-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-favorites"
+  method="POST"
+  lambda_arn = module.get_favorite_lambda.lambda_arn
+  lambda_function_name = module.get_favorite_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "remove_favorites" {
+  permission_name = "remove-favorite-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="remove-favorites"
+  method="POST"
+  lambda_arn = module.remove_favorite_lambda.lambda_arn
+  lambda_function_name = module.remove_favorite_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "NONE"

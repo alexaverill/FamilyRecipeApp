@@ -42,13 +42,13 @@ export default function CollectionsView() {
     })
     if (loading) {
         return (
-            <div class="content">
+            <div className="content">
                 <CircularProgress />
             </div>
         )
     }
     return (
-        <div class="content">
+        <div className="content">
             <div className="recipeHeader">
                 <div>
                     <h1>{collection.name}</h1>

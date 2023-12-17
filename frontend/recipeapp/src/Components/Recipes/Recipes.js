@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 import "./Recipes.css";
 import { Button, CircularProgress, TextField } from "@mui/material";
 import RecipeCard from "../RecipeCard/RecipeCard";
+import { UserContext } from "../UserContext/UserContext";
 export default function Recipes() {
+    const {favorites: userData} = useContext(UserContext)
     const [recipes, setRecipes] = useState([]);
     const [isLoading,setIsLoading] = useState(false);
+    console.log(userData);
     useEffect(() => {
         LoadRecipes();
     }, [])
@@ -24,17 +27,22 @@ export default function Recipes() {
                 console.log(err);
                 console.log(err.message);
             });
-        console.log(data);
         if (data) {
             setRecipes(data);
         }
         setIsLoading(false);
     }
     let recipeDisplay = recipes?.map((recipe) => {
-        return <RecipeCard recipe={recipe} />; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
+        if(userData?.favorites?.find((fav)=> { 
+            console.log(fav); 
+            return fav === recipe.recipeId
+        })){
+            return <RecipeCard recipe={recipe} key={recipe.recipeId} favorited={true}/>; 
+        }
+        return <RecipeCard recipe={recipe} key={recipe.recipeId} favorited={false} />; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
     })
     return (
-        <div class="content">
+        <div className="content">
             <div className="recipeHeader">
                 <div>
                     <h1>Our Cookbook</h1>
