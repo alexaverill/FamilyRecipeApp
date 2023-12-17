@@ -14,11 +14,23 @@ import { UserContext, UserContextProvider } from './Components/UserContext/UserC
 import AuthRoute from './Components/AuthRoute/AuthRoute';
 import { useContext } from 'react';
 import { CircularProgress } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material';
 import FavoriteView from './Components/FavoriteView/FavoriteView';
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#ee95af',
+      main: '#dd3f64',
+      dark: '#b6365b',
+      contrastText: '#fff',
+    }
+  },
+});
 function App() {
   const {isLoading} = useContext(UserContext);
   return (
     <div className="App">
+      <ThemeProvider theme={theme}>
       <UserContextProvider>
         {isLoading? <CircularProgress/>:
         <>
@@ -39,6 +51,7 @@ function App() {
         </Routes>
         </>}
       </UserContextProvider>
+      </ThemeProvider>
     </div>
   );
 }

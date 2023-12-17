@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {signIn } from 'aws-amplify/auth'
 import { TextField } from '@mui/material';
 import {Button} from '@mui/material';
+
 export default function Login(){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -30,9 +31,12 @@ export default function Login(){
     }
     return( 
         <div className='content'>
-            <div>Username: <TextField onChange={(e)=>setUsername(e.target.value)} size='small'/></div>
-            <div>Password: <TextField onChange={(e)=>setPassword(e.target.value)} size='small' type="password"/></div>
-            <Button onClick={handleSubmit}>Login</Button>
+            <div className={classes.loginForm}>
+            <div className={classes.loginRow}><span>Username:</span> <TextField onChange={(e)=>setUsername(e.target.value)} size='small'/></div>
+            <div className={classes.loginRow}><span>Password:</span><TextField onChange={(e)=>setPassword(e.target.value)} size='small' type="password"/></div>
+            <Button variant="contained" onClick={handleSubmit} className='recipeLinkButton'>Login</Button>
+            {loginError? <h1>Invalid Login, please try again</h1>:<></>}
+            </div>
         </div>
     )
 }

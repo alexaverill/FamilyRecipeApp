@@ -7,7 +7,7 @@ import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
 import { UserContext } from "../UserContext/UserContext";
 export default function RecipeView() {
-    const {favorites} = useContext(UserContext);
+    const {user,favorites} = useContext(UserContext);
     const {recipeId} = useParams();
     const location = useLocation();
     const [recipe, setRecipe] = useState({});
@@ -51,7 +51,8 @@ export default function RecipeView() {
             setRecipe(location.state.recipe);
             setCollections(location.state.recipe.collections);
         }
-        
+        console.log(user);
+        console.log(recipe);
     }, []);
     useEffect(()=>{
         console.log(favorites);
@@ -96,8 +97,10 @@ export default function RecipeView() {
                     <div className={classes.titleRow}>
                         <div className="recipeTitle">{recipe.title}</div>
                         <div className={classes.actions}>
-                            <Link component="button" className={classes.editLink} to={'edit'} state={{recipe}}><img className={classes.editImg} src="/edit.png" /></Link>
-                            <Button><img src="/download.png" /></Button>
+                            {recipe.userId == user.userId ? 
+                                <Link component="button" className={classes.editLink} to={'edit'} state={{recipe}}><img className={classes.editImg} src="/edit.png" /></Link>:
+                                <></>}
+                            {/* <Button><img src="/download.png" /></Button> */}
                             <FavoriteButton favorited={isFavorited}/>
                             <Link component="button" to="/create" state={{recipe,variation:true}}className="recipeLinkButton">Add Variation</Link>
                         </div>

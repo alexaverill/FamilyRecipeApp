@@ -1,0 +1,1 @@
+aws s3 sync ../recipeapp/build s3://familyrecipeapp.com

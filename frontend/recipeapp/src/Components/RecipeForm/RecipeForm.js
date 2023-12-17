@@ -106,7 +106,7 @@ export default function RecipeForm() {
     });
     const handleSave = async () => {
         setIsLoading(true);
-        let cleanedCollections = collections.map(collection => {
+        let cleanedCollections = collections?.map(collection => {
             if (collection.name != undefined || collection.name != null) {
                 return { name: collection.name, collectionId: collection.collectionId };
             }
