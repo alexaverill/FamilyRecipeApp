@@ -1,21 +1,24 @@
-.cardContainer{
-    display:flex;
+.cardContainer {
+    display: flex;
 }
+
 .card {
     display: flex;
     flex-direction: row;
     background-color: hsba(0, 0%, 100%, 1);
-    width: 37.5rem; 
+    width: 37.5rem;
     border-radius: 0.5rem;
     border: 1px solid #EDEDED;
     text-decoration: none;
-    min-height: 110px;
+    min-height: 125px;
 }
-.clickableCard{
-    display:flex;
+
+.clickableCard {
+    display: flex;
     width: 100%;
 }
-.card:hover{
+
+.card:hover {
     cursor: pointer;
     border-radius: 0.5rem;
     border: 1px solid #EDEDED;
@@ -30,7 +33,7 @@
 .cardContent {
     display: flex;
     padding: 1rem;
-    flex:1 0 0;
+    flex: 1 0 0;
     justify-content: space-between;
 }
 
@@ -65,7 +68,16 @@
     font-style: normal;
     font-weight: 400;
 }
-.collections{
-    gap:.5rem;
+
+.collections {
+    gap: .5rem;
     display: flex;
+}
+
+.textContent {
+
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+
 }
