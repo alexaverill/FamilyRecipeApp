@@ -14,6 +14,21 @@ export async function QueryRecipes(eventObj){
             console.log(err.message);
         });
 }
+export async function GetRecipes(){
+    let url = '/get-recipes'
+        return await fetch(process.env.REACT_APP_API_URL + url, {
+            method: "GET",
+            headers: {
+                //'Authorization':`Bearer ${token}`,
+                "Content-Type": "application/json",
+            }
+        })
+            .then((response) => response.json())
+            .catch((err) => {
+                console.log(err);
+                console.log(err.message);
+            });
+}
 export async function FavoriteRecipe(eventObj){
     let url = '/add-favorite';
     return await fetch(process.env.REACT_APP_API_URL + url, {

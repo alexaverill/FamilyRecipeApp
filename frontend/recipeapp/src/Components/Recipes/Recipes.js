@@ -4,36 +4,25 @@ import "./Recipes.css";
 import { Button, CircularProgress, TextField } from "@mui/material";
 import RecipeCard from "../RecipeCard/RecipeCard";
 import { UserContext } from "../UserContext/UserContext";
+import { GetRecipes } from "../../API/RecipeApi";
 export default function Recipes() {
-    const {favorites: userData} = useContext(UserContext)
+    const {favorites} = useContext(UserContext)
     const [recipes, setRecipes] = useState([]);
     const [isLoading,setIsLoading] = useState(false);
-    console.log(userData);
+    console.log(favorites);
     useEffect(() => {
         LoadRecipes();
     }, [])
     const LoadRecipes = async () => {
         setIsLoading(true);
-        let url = '/get-recipes'
-        let data = await fetch(process.env.REACT_APP_API_URL + url, {
-            method: "GET",
-            headers: {
-                //'Authorization':`Bearer ${token}`,
-                "Content-Type": "application/json",
-            }
-        })
-            .then((response) => response.json())
-            .catch((err) => {
-                console.log(err);
-                console.log(err.message);
-            });
+        let data = await GetRecipes();
         if (data) {
             setRecipes(data);
         }
         setIsLoading(false);
     }
     let recipeDisplay = recipes?.map((recipe) => {
-        if(userData?.favorites?.find((fav)=> { 
+        if(favorites?.find((fav)=> { 
             console.log(fav); 
             return fav === recipe.recipeId
         })){
