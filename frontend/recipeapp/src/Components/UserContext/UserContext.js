@@ -1,22 +1,34 @@
 import { useState, useEffect, createContext } from "react";
 import { getCurrentUser } from "aws-amplify/auth";
-export const UserContext = createContext(null);
-export const UserContextProvider = ({children}) =>{
-    const [data, setData] = useState({user:{}})
-  
-    useEffect(() =>{
+import { GetFavorites } from "../../API/RecipeApi";
+export const UserContext = createContext({});
+export const UserContextProvider = ({ children }) => {
+    const [user, setUser] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [favorites,setFavorites] = useState([]);
+    useEffect(() => {
         getUserAndSession();
-    },[]);
-   const getUserAndSession = async () =>{
-    let user = await getCurrentUser();
-    console.log(user);
-    setData({user})
-
-   }
-   const { Provider } = UserContext;
-   return(
-       <Provider value={data}>
-           {children}
-       </Provider>
-   )
+    }, []);
+    const getUserAndSession = async () => {
+        setIsLoading(true)
+        let user = await getCurrentUser();
+        console.log(user);
+        setUser(user)
+        let favorites = await GetFavorites({username:user.username,userId:user.userId});
+        setFavorites(favorites);
+        setIsLoading(false);
+    }
+    const AddFavorite = (id)=>{
+        setFavorites([...favorites,id]);
+    }
+    const RemoveFavorite = (id)=>{
+        favorites.splice(favorites.find(fav=>fav == id),1);
+        setFavorites(favorites);
+    }
+    const { Provider } = UserContext;
+    return (
+        <Provider value={{user,isLoading,favorites,AddFavorite,RemoveFavorite}}>
+            {children}
+        </Provider>
+    )
 }

@@ -10,12 +10,18 @@ import NavBar from './Components/Navbar/Navbar';
 import Collections from './Components/Collections/Collections';
 import CollectionsView from './Components/CollectionView/CollectionView';
 import Login from './Components/Login/Login';
-import { UserContextProvider } from './Components/UserContext/UserContext';
+import { UserContext, UserContextProvider } from './Components/UserContext/UserContext';
 import AuthRoute from './Components/AuthRoute/AuthRoute';
+import { useContext } from 'react';
+import { CircularProgress } from '@mui/material';
+import FavoriteView from './Components/FavoriteView/FavoriteView';
 function App() {
+  const {isLoading} = useContext(UserContext);
   return (
     <div className="App">
       <UserContextProvider>
+        {isLoading? <CircularProgress/>:
+        <>
         <NavBar />
         <Routes>
           <Route path="/" element={
@@ -25,11 +31,13 @@ function App() {
           } />
           <Route path="/login" element={<Login />} />
           <Route path="/create" element={<AuthRoute><RecipeForm /></AuthRoute>} />
+          <Route path="/favorites" element={<AuthRoute><FavoriteView /></AuthRoute>} />
           <Route path="/collections" element={<AuthRoute><Collections /></AuthRoute>} />
           <Route path="/collections/:collectionId" element={<AuthRoute><CollectionsView /></AuthRoute>} />
           <Route path="/recipe/:recipeId/edit" element={<AuthRoute><RecipeForm /></AuthRoute>} />
           <Route path="/recipe/:recipeId" element={<AuthRoute><RecipeView /></AuthRoute>} />
         </Routes>
+        </>}
       </UserContextProvider>
     </div>
   );

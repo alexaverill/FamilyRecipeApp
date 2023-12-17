@@ -15,7 +15,7 @@ export const handler = async (event, context) => {
         });
 
         const response = await docClient.send(command);
-        let favorites = response.Item;
+        let favorites = response.Item.favorites;
         return {
             statusCode: 200,
             body: JSON.stringify(favorites),

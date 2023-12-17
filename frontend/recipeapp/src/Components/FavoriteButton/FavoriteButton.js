@@ -1,12 +1,13 @@
 import { Button, fabClasses } from "@mui/material";
 import classes from './FavoriteButton.module.css'
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {UserContext} from '../UserContext/UserContext'
 import { FavoriteRecipe, RemoveFavorites } from "../../API/RecipeApi";
 export default function FavoriteButton({favorited,recipeId}){
     const [favorite, setFavorited] = useState(favorited);
     const {AddFavorite,RemoveFavorite} = useContext(UserContext);
     const {user} = useContext(UserContext);
+    useEffect(()=>{setFavorited(favorited)},[favorited])
     const handleFavorite = async ()=>{
         let eventObj = {
             user,

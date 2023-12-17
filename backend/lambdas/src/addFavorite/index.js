@@ -23,7 +23,7 @@ export const handler = async (event, context) => {
       user.favorites = [parsedEvent.recipeId];
       updateUser(user);
     }else{
-      if(!user.favorites.find(fav=>fav.recipeId === parsedEvent.recipeId)){
+      if(!user.favorites.find(fav=>fav === parsedEvent.recipeId)){
         user.favorites.push(parsedEvent.recipeId);
         updateUser(user);
       }

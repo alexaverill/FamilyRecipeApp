@@ -6,12 +6,12 @@ export default function NavBar(){
         <div className="title-row">
         <div className="title"><Link to="/">Family Recipe App</Link></div>
         <div className="links">
-            <Link>Cookbook</Link>
+            <Link to="/">Cookbook</Link>
             <Link to='/collections'>Collections</Link>
         </div>
         </div>
         <div className="links">
-            <Link>My Favorites</Link>
+            <Link to="/favorites">My Favorites</Link>
             <Link>Logout</Link>
         </div>
     </div>

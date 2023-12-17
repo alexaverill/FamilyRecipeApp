@@ -6,10 +6,9 @@ import RecipeCard from "../RecipeCard/RecipeCard";
 import { UserContext } from "../UserContext/UserContext";
 import { GetRecipes } from "../../API/RecipeApi";
 export default function Recipes() {
-    const {favorites} = useContext(UserContext)
+    const {user,favorites} = useContext(UserContext)
     const [recipes, setRecipes] = useState([]);
     const [isLoading,setIsLoading] = useState(false);
-    console.log(favorites);
     useEffect(() => {
         LoadRecipes();
     }, [])
@@ -23,7 +22,6 @@ export default function Recipes() {
     }
     let recipeDisplay = recipes?.map((recipe) => {
         if(favorites?.find((fav)=> { 
-            console.log(fav); 
             return fav === recipe.recipeId
         })){
             return <RecipeCard recipe={recipe} key={recipe.recipeId} favorited={true}/>; 

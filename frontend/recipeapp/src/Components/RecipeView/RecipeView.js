@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
 import { Button, CircularProgress,Chip } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
+import { UserContext } from "../UserContext/UserContext";
 export default function RecipeView() {
+    const {favorites} = useContext(UserContext);
     const {recipeId} = useParams();
     const location = useLocation();
     const [recipe, setRecipe] = useState({});
     const [isLoading,setIsLoading] = useState(false);
     const [collections,setCollections] = useState([]);
-    // let instructions = location.state.recipe.instructions;
-    // let ingredients = location.state.recipe.ingredients;
+    const [isFavorited,setIsFavorited] = useState(false);
+
     let displaySteps = recipe.steps?.map((steps) => {
 
         return <li>{steps}</li>
@@ -49,7 +51,15 @@ export default function RecipeView() {
             setRecipe(location.state.recipe);
             setCollections(location.state.recipe.collections);
         }
+        
     }, []);
+    useEffect(()=>{
+        console.log(favorites);
+        let value = favorites.includes(recipe.recipeId)
+        console.log(value);
+        setIsFavorited(value);
+        console.log(isFavorited)
+    },[favorites])
     if(isLoading){
         return (<div className="content">
             <div className="twoColumn">
@@ -88,7 +98,7 @@ export default function RecipeView() {
                         <div className={classes.actions}>
                             <Link component="button" className={classes.editLink} to={'edit'} state={{recipe}}><img className={classes.editImg} src="/edit.png" /></Link>
                             <Button><img src="/download.png" /></Button>
-                            <FavoriteButton />
+                            <FavoriteButton favorited={isFavorited}/>
                             <Link component="button" to="/create" state={{recipe,variation:true}}className="recipeLinkButton">Add Variation</Link>
                         </div>
                     </div>
