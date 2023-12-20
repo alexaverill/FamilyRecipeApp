@@ -4,6 +4,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { GetCollections } from "../../API/CollectionApi";
 import { Button } from "@mui/material";
 import classes from './CollectionRow.module.css'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 const filter = createFilterOptions();
 export default function CollectionRow({ collectionAdded }) {
     const [collections, setCollections] = useState([]);
@@ -41,7 +42,7 @@ export default function CollectionRow({ collectionAdded }) {
         }
     }
     if(!inEdit){
-        return <Button onClick={()=>setInEdit(true)}>+</Button>
+        return <Button onClick={()=>setInEdit(true)}><AddCircleOutlineIcon/></Button>
     }
 
     return (

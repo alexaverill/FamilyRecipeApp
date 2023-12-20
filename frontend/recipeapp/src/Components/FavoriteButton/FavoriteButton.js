@@ -3,6 +3,9 @@ import classes from './FavoriteButton.module.css'
 import { useContext, useEffect, useState } from "react";
 import {UserContext} from '../UserContext/UserContext'
 import { FavoriteRecipe, RemoveFavorites } from "../../API/RecipeApi";
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
 export default function FavoriteButton({favorited,recipeId}){
     const [favorite, setFavorited] = useState(favorited);
     const {AddFavorite,RemoveFavorite} = useContext(UserContext);
@@ -32,11 +35,11 @@ export default function FavoriteButton({favorited,recipeId}){
     };
     if(favorite){
         return (
-            <Button onClick={handleUnFavorite}><img src="/favorited.png"/></Button>
+            <Button onClick={handleUnFavorite}><FavoriteIcon/></Button>
         )
     }
     return(
-        <Button className={classes.favbutton} onClick={handleFavorite}><img src="/favorite.png"/></Button>
+        <Button className={classes.favbutton} onClick={handleFavorite}><FavoriteBorderIcon/></Button>
 
     )
 }

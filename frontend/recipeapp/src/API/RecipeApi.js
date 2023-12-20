@@ -77,3 +77,34 @@ export async function RemoveFavorites(eventObj){
             console.log(err.message);
         });
 }
+export async function CreateRecipe(eventObj){
+    let url = '/create-recipe'
+    return await fetch(process.env.REACT_APP_API_URL + url, {
+        method: "POST",
+        headers: {
+            //'Authorization':`Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(eventObj),
+    })
+        .then((response) => response.json())
+        .catch((err) => {
+            console.log(err);
+            console.log(err.message);
+        });
+}
+export async function DeleteRecipe(recipeId){
+    let url = '/delete-recipe/'+recipeId
+    return await fetch(process.env.REACT_APP_API_URL + url, {
+        method: "DELETE",
+        headers: {
+            //'Authorization':`Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .catch((err) => {
+            console.log(err);
+            console.log(err.message);
+        });
+}

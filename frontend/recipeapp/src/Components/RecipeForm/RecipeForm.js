@@ -4,14 +4,18 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import classes from './RecipeForm.module.css'
 import EditableText from '../EditableText/EditableText';
 import { useEffect, useState,useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CollectionRow from '../CollectionRow/CollectionRow';
 import { AddToCollection, RemoveFromCollection } from '../../API/CollectionApi';
 import { UserContext } from '../UserContext/UserContext';
 import EditableTextArea from '../EditableTextArea/EditableTextArea';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
+import { CreateRecipe, DeleteRecipe } from '../../API/RecipeApi';
+import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 export default function RecipeForm() {
+    let navigate = useNavigate();
     const location = useLocation();
     const [recipeId, setRecipeId] = useState(null);
     const [title, setTitle] = useState('Title');
@@ -21,6 +25,7 @@ export default function RecipeForm() {
     const [steps, setSteps] = useState(['']);
     const [collections, setCollections] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [confirmationOpen,setConfirmationOpen] = useState(false);
     const [alert, setAlert] = useState({ type: 'success', visible: false, message: '' });
     const {user} = useContext(UserContext);
     useEffect(() => {
@@ -64,12 +69,12 @@ export default function RecipeForm() {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)} autoFocus></TextField>
-                <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button></div>
+                <Button onClick={() => { removeIngredient(index, ingredient) }}><RemoveCircleOutlineIcon/></Button></div>
             </div>
         }
         return <div className={classes.listEntry}><div className={classes.listItem}>
             <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)}></TextField>
-            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}>X</Button>}</div>
+            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}><RemoveCircleOutlineIcon/></Button>}</div>
 
         </div>
     });
@@ -98,12 +103,12 @@ export default function RecipeForm() {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)} autoFocus></TextField>
-                <Button onClick={() => { removeStep(index, step) }}>X</Button></div>
+                <Button onClick={() => { removeStep(index, step) }}><RemoveCircleOutlineIcon/></Button></div>
             </div>
         }
         return <div className={classes.listEntry}><div className={classes.listItem}>
             <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)}></TextField>
-            {index === 0 ? <></> : <Button onClick={() => { removeStep(index, step) }}>X</Button>}</div>
+            {index === 0 ? <></> : <Button onClick={() => { removeStep(index, step) }}><RemoveCircleOutlineIcon/></Button>}</div>
         </div>
     });
     const handleSave = async () => {
@@ -124,21 +129,7 @@ export default function RecipeForm() {
             user
         };
         console.log(eventObj);
-
-        let url = '/create-recipe'
-        let data = await fetch(process.env.REACT_APP_API_URL + url, {
-            method: "POST",
-            headers: {
-                //'Authorization':`Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(eventObj),
-        })
-            .then((response) => response.json())
-            .catch((err) => {
-                console.log(err);
-                console.log(err.message);
-            });
+        let data = CreateRecipe(eventObj);
         console.log(data);
         if (data) {
             setRecipeId(data.recipeId);
@@ -158,6 +149,16 @@ export default function RecipeForm() {
         setTimeout(() => setAlert({ visible: false }), 5000);
         setIsLoading(false);
     }
+    const handleRecipeDelete = ()=>{
+        setConfirmationOpen(true);
+    }
+    const handleConfirmationClose = ()=>{
+        setConfirmationOpen(false);
+    }
+    const handleConfirmation = async ()=>{
+        await DeleteRecipe(recipeId);
+        navigate('/');
+    }
 
     const handleDelete = async (collectionId, name) => {
         console.log(collectionId);
@@ -174,6 +175,7 @@ export default function RecipeForm() {
     );
     return (
         <div className="content">
+            <ConfirmationDialog open={confirmationOpen} onClose={handleConfirmationClose} onConfirm={handleConfirmation}/>
             {alert.visible ?
                 <Alert variant="outlined" severity={alert.type} onClose={() => { setAlert({ visible: false }) }}>
                     {alert.message}
@@ -184,6 +186,7 @@ export default function RecipeForm() {
                     <div className={classes.titleRow}>
                         <div className='recipeTitle'><EditableText initialText="Title" onChange={(e) => setTitle(e.target.value)} text={title} /></div>
                         <div className={classes.actions}>
+                            <Button onClick={handleRecipeDelete}><DeleteIcon/></Button>
                             <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton}>Save</LoadingButton>
                         </div>
                     </div>

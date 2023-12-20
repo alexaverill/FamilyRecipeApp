@@ -114,6 +114,13 @@ module "get_recipe_lambda" {
   lambda_name = "get-recipe-lambda"
   handler_path = "index.handler"
 }
+module "delete_recipe_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/deleteRecipe"
+  output_path = "${path.module}/deleteRecipe.zip"
+  lambda_name = "delete-recipe-lambda"
+  handler_path = "index.handler"
+}
 module "query_recipe_lambda" {
   source = "./lambda_module"
   source_path =  "../${path.module}/lambdas/src/queryForRecipes"
@@ -345,6 +352,20 @@ module "get_recipe_api" {
   method="GET"
   lambda_arn = module.get_recipe_lambda.lambda_arn
   lambda_function_name = module.get_recipe_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "delete_recipe_api" {
+  permission_name = "get-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="delete-recipe/{recipeId+}"
+  method="DELETE"
+  lambda_arn = module.delete_recipe_lambda.lambda_arn
+  lambda_function_name = module.delete_recipe_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "NONE"
