@@ -35,7 +35,7 @@ export default function Recipes() {
                     <h1>Our Cookbook</h1>
                 </div>
                 <div className="search-and-add">
-                    <TextField size="small" label="Search"></TextField>
+                    {/* <TextField size="small" label="Search"></TextField> */}
                     <Link component="button" to="/create" className="recipeLinkButton">Add Recipe</Link>
                 </div>
             </div>

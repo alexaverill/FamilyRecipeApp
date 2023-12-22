@@ -21,7 +21,13 @@
 .editImg {
     height: .75rem;
 }
-
+.image{
+    width: 12.5rem;
+    height: 12.5rem; 
+}
+.image > img{
+    width:100%;
+}
 .collections {
     display: flex;
     flex-direction: row;

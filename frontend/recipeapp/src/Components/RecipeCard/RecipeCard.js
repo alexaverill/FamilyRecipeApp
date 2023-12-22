@@ -11,7 +11,7 @@ export default function RecipeCard({ recipe,favorited }) {
         <div className={classes.card}>
             <div className={classes.clickableCard} onClick={() => navigate('/recipe/' + recipe.recipeId, { state: { recipe } })}>
                 <div className={classes.cardImg}>
-
+                    <img className={classes.img} src="/images/one.svg"/>
                 </div>
                 <div className={classes.cardContent}>
                     <div className={classes.textContent}>

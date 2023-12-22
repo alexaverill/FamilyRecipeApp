@@ -94,7 +94,7 @@ export default function RecipeView() {
     return (
         <div className="content">
             <div className="twoColumn">
-                <div className={classes.image}><img src="/placeholder_1.png" /></div>
+                <div className={classes.image}><img src="/images/one.svg" /></div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
                         <div className="recipeTitle">{recipe.title}</div>
