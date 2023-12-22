@@ -211,17 +211,19 @@ export default function RecipeForm() {
                     <div className={classes.collections}>
                         {collectionList}
                     </div>
-                    <div>
+                    <div className={classes.listColumn}>
                         <h2>Ingredients</h2>
                         <div className='list'>
                             {ingredientDisplay}
                         </div>
+                        <div className={classes.listHint}>Tip: Hit enter to add a new ingredient.</div>
                     </div>
-                    <div>
+                    <div className={classes.listColumn}>
                         <h2>Steps</h2>
                         <div className={classes.numberedList}>
                             {instructionDisplay}
                         </div>
+                        <div className={classes.listHint}>Tip: Hit enter to add a new ingredient.</div>
                     </div>
                     <div>
                         <h2>Notes</h2>

@@ -1,69 +1,93 @@
-
-.titleRow{
+.titleRow {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
-.leftAlign{
+
+.leftAlign {
     text-align: left;
 }
-.list{
+
+.list {
     display: flex;
     flex-direction: column;
 }
-.listEntry{
+
+.listEntry {
     line-height: 3rem;
     width: 100%;
     display: flex;
     align-items: center;
 }
-.listEntry::before{
+
+.listEntry::before {
     content: '•';
 }
-.listItem{
-    display:flex;
+
+.listItem {
+    display: flex;
     align-items: center;
     width: 100%;
 }
-.listItem > div{
+
+.listItem>div {
     width: 90%;
 }
 
-.numberedList{
+.numberedList {
     counter-reset: my-counter;
- }
- 
- .numberedList > div::before {
+}
+
+.numberedList>div::before {
     counter-increment: my-counter;
     content: counter(my-counter) ". ";
- }
-.entry::before{
+}
+
+.entry::before {
     content: '\2022';
     font-weight: bold;
     font-size: larger;
 }
-.entry{
-	text-align: left;
-	display: flex;
-	align-items: center;
+
+.entry {
+    text-align: left;
+    display: flex;
+    align-items: center;
 }
-.actions{
+
+.actions {
     display: flex;
     flex-direction: row;
     max-height: 3rem;
 }
-.filledButton{
+
+.filledButton {
     background: #DD3F65;
 }
-.filledButton:hover{
+
+.filledButton:hover {
     background-color: #b73755;
-    color:lightgray;
+    color: lightgray;
 }
-.collections{
+
+.collections {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.listColumn {
+	gap: 0.5rem;
 	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 1rem;
-	flex-wrap: wrap;
+	flex-direction: column;
+}
+.listHint {
+    color: #B2B2B2;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }
