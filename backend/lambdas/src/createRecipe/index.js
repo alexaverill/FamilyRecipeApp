@@ -31,7 +31,7 @@ export const handler = async (event, context) => {
   }
   //add to collection array if it doesn't exist
   console.log(parsedEvent.collections);
-  if (parsedEvent.collections.length > 0) {
+  if (parsedEvent.collections?.length > 0) {
     for (let collection of parsedEvent.collections) {
       if (collection.length <= 0) { continue; }
       try {

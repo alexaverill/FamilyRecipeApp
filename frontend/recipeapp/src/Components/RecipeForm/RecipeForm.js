@@ -15,12 +15,15 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { CreateRecipe, DeleteRecipe } from '../../API/RecipeApi';
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 export default function RecipeForm() {
+    const initialTitleText = 'Tap to enter a Title';
+    const initialDescriptionText = 'Tap to enter a description';
+    const initialNotesText = 'Add Notes';
     let navigate = useNavigate();
     const location = useLocation();
     const [recipeId, setRecipeId] = useState(null);
-    const [title, setTitle] = useState('Tap to enter a Title');
-    const [description, setDescription] = useState('Tap to enter a description');
-    const [notes, setNotes] = useState('Add Notes');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [notes, setNotes] = useState('');
     const [parentId, setParentId] = useState(null);
     const [ingredients, setIngredients] = useState(['']);
     const [steps, setSteps] = useState(['']);
@@ -29,6 +32,10 @@ export default function RecipeForm() {
     const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [alert, setAlert] = useState({ type: 'success', visible: false, message: '' });
     const { user } = useContext(UserContext);
+    const arrayHasValidEntry =(arr)=>{
+        return arr[0].length>0; // we always have at least an empty entry in the states we are testing above
+    }
+    const canSave = title.length>0 && arrayHasValidEntry(steps)>0 && arrayHasValidEntry(ingredients);
     useEffect(() => {
         if (location.state) {
             let recipe = location.state.recipe;
@@ -116,12 +123,14 @@ export default function RecipeForm() {
         </div>
     });
     const handleSave = async () => {
+        console.log("Save");
         setIsLoading(true);
         let cleanedCollections = collections?.map(collection => {
             if (collection.name != undefined || collection.name != null) {
                 return { name: collection.name, collectionId: collection.collectionId };
             }
         });
+
         let eventObj = {
             userId: user.userId,
             recipeId,
@@ -189,14 +198,14 @@ export default function RecipeForm() {
                 <div><img src="/placeholder_1.png" /></div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
-                        <div className='recipeTitle'><EditableText initialText="Title" onChange={(e) => setTitle(e.target.value)} text={title} /></div>
+                        <div className='recipeTitle'><EditableText initialText={initialTitleText} onChange={(e) => setTitle(e.target.value)} text={title} /></div>
                         <div className={classes.actions}>
                             <Button onClick={handleRecipeDelete}><DeleteIcon /></Button>
-                            <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton}>Save</LoadingButton>
+                            <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton} disabled={!canSave}>Save</LoadingButton>
                         </div>
                     </div>
                     <div className='leftAlign descriptionRow'>
-                        <EditableTextArea initialText="Description" onChange={(e) => setDescription(e.target.value)} text={description} />
+                        <EditableTextArea initialText={initialDescriptionText} onChange={(e) => setDescription(e.target.value)} text={description} />
 
                     </div>
                     <div className={classes.collections}>
@@ -217,7 +226,7 @@ export default function RecipeForm() {
                     <div>
                         <h2>Notes</h2>
                         <div className='leftAlign descriptionRow'>
-                            <EditableTextArea initialText="Add Notes" onChange={(e) => setNotes(e.target.value)} text={notes} />
+                            <EditableTextArea initialText={initialNotesText} onChange={(e) => setNotes(e.target.value)} text={notes} />
 
                         </div>
                     </div>
