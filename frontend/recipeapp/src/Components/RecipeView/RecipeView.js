@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
 import { Button, CircularProgress,Chip } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
 import { UserContext } from "../UserContext/UserContext";
+import EditIcon from '@mui/icons-material/Edit'
 export default function RecipeView() {
+    const navigate = useNavigate();
     const {user,favorites} = useContext(UserContext);
     const {recipeId} = useParams();
     const location = useLocation();
@@ -98,7 +100,7 @@ export default function RecipeView() {
                         <div className="recipeTitle">{recipe.title}</div>
                         <div className={classes.actions}>
                             {recipe.userId == user.userId ? 
-                                <Link component="button" className={classes.editLink} to={'edit'} state={{recipe}}><img className={classes.editImg} src="/edit.png" /></Link>:
+                                <Button onClick={()=>navigate('edit',{state:{recipe}})}><EditIcon/></Button>:
                                 <></>}
                             {/* <Button><img src="/download.png" /></Button> */}
                             <FavoriteButton favorited={isFavorited}/>
