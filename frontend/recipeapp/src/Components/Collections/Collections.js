@@ -22,6 +22,9 @@ export default function Collections() {
     })
     return (
         <div className="content">
+            <div>
+                    <h1>Collections</h1>
+                </div>
             <div className={classes.collectionGrid}>
                { loading ? <CircularProgress/>: displayCollections}
             </div>

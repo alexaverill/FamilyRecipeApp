@@ -53,16 +53,20 @@ export default function RecipeView() {
             setRecipe(location.state.recipe);
             setCollections(location.state.recipe.collections);
         }
+        checkIfFavorited();
         console.log(user);
         console.log(recipe);
     }, []);
     useEffect(()=>{
-        console.log(favorites);
-        let value = favorites.includes(recipe.recipeId)
-        console.log(value);
-        setIsFavorited(value);
-        console.log(isFavorited)
+        checkIfFavorited();
     },[favorites])
+    const checkIfFavorited = ()=>{
+        console.log(favorites);
+        console.log(`Recipe Id:${recipeId}`);
+        let value = favorites.includes(recipeId)
+        console.log(`Is Favorited: ${value}`);
+        setIsFavorited(value);
+    }
     if(isLoading){
         return (<div className="content">
             <div className="twoColumn">
