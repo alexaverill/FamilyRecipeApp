@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import classes from './RecipeForm.module.css'
 import EditableText from '../EditableText/EditableText';
-import { useEffect, useState,useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CollectionRow from '../CollectionRow/CollectionRow';
@@ -18,16 +18,17 @@ export default function RecipeForm() {
     let navigate = useNavigate();
     const location = useLocation();
     const [recipeId, setRecipeId] = useState(null);
-    const [title, setTitle] = useState('Title');
-    const [description, setDescription] = useState('Description');
+    const [title, setTitle] = useState('Tap to enter a Title');
+    const [description, setDescription] = useState('Tap to enter a description');
+    const [notes, setNotes] = useState('Add Notes');
     const [parentId, setParentId] = useState(null);
     const [ingredients, setIngredients] = useState(['']);
     const [steps, setSteps] = useState(['']);
     const [collections, setCollections] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [confirmationOpen,setConfirmationOpen] = useState(false);
+    const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [alert, setAlert] = useState({ type: 'success', visible: false, message: '' });
-    const {user} = useContext(UserContext);
+    const { user } = useContext(UserContext);
     useEffect(() => {
         if (location.state) {
             let recipe = location.state.recipe;
@@ -43,6 +44,9 @@ export default function RecipeForm() {
             setIngredients(recipe.ingredients);
             setSteps(recipe.steps);
             setCollections(recipe.collections);
+            if (recipe.notes) {
+                setNotes(recipe.notes);
+            }
         }
     }, [location.state]);
     const handleIngredientEnter = (event) => {
@@ -69,12 +73,12 @@ export default function RecipeForm() {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)} autoFocus></TextField>
-                <Button onClick={() => { removeIngredient(index, ingredient) }}><RemoveCircleOutlineIcon/></Button></div>
+                <Button onClick={() => { removeIngredient(index, ingredient) }}><RemoveCircleOutlineIcon /></Button></div>
             </div>
         }
         return <div className={classes.listEntry}><div className={classes.listItem}>
             <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)}></TextField>
-            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}><RemoveCircleOutlineIcon/></Button>}</div>
+            {index === 0 ? <></> : <Button onClick={() => { removeIngredient(index, ingredient) }}><RemoveCircleOutlineIcon /></Button>}</div>
 
         </div>
     });
@@ -103,12 +107,12 @@ export default function RecipeForm() {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)} autoFocus></TextField>
-                <Button onClick={() => { removeStep(index, step) }}><RemoveCircleOutlineIcon/></Button></div>
+                <Button onClick={() => { removeStep(index, step) }}><RemoveCircleOutlineIcon /></Button></div>
             </div>
         }
         return <div className={classes.listEntry}><div className={classes.listItem}>
             <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)}></TextField>
-            {index === 0 ? <></> : <Button onClick={() => { removeStep(index, step) }}><RemoveCircleOutlineIcon/></Button>}</div>
+            {index === 0 ? <></> : <Button onClick={() => { removeStep(index, step) }}><RemoveCircleOutlineIcon /></Button>}</div>
         </div>
     });
     const handleSave = async () => {
@@ -126,6 +130,7 @@ export default function RecipeForm() {
             description,
             ingredients,
             steps,
+            notes,
             user
         };
         console.log(eventObj);
@@ -149,13 +154,13 @@ export default function RecipeForm() {
         setTimeout(() => setAlert({ visible: false }), 5000);
         setIsLoading(false);
     }
-    const handleRecipeDelete = ()=>{
+    const handleRecipeDelete = () => {
         setConfirmationOpen(true);
     }
-    const handleConfirmationClose = ()=>{
+    const handleConfirmationClose = () => {
         setConfirmationOpen(false);
     }
-    const handleConfirmation = async ()=>{
+    const handleConfirmation = async () => {
         await DeleteRecipe(recipeId);
         navigate('/');
     }
@@ -175,7 +180,7 @@ export default function RecipeForm() {
     );
     return (
         <div className="content">
-            <ConfirmationDialog open={confirmationOpen} onClose={handleConfirmationClose} onConfirm={handleConfirmation}/>
+            <ConfirmationDialog open={confirmationOpen} onClose={handleConfirmationClose} onConfirm={handleConfirmation} />
             {alert.visible ?
                 <Alert variant="outlined" severity={alert.type} onClose={() => { setAlert({ visible: false }) }}>
                     {alert.message}
@@ -186,13 +191,13 @@ export default function RecipeForm() {
                     <div className={classes.titleRow}>
                         <div className='recipeTitle'><EditableText initialText="Title" onChange={(e) => setTitle(e.target.value)} text={title} /></div>
                         <div className={classes.actions}>
-                            <Button onClick={handleRecipeDelete}><DeleteIcon/></Button>
+                            <Button onClick={handleRecipeDelete}><DeleteIcon /></Button>
                             <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton}>Save</LoadingButton>
                         </div>
                     </div>
                     <div className='leftAlign descriptionRow'>
                         <EditableTextArea initialText="Description" onChange={(e) => setDescription(e.target.value)} text={description} />
-                        
+
                     </div>
                     <div className={classes.collections}>
                         {collectionList}
@@ -207,6 +212,13 @@ export default function RecipeForm() {
                         <h2>Steps</h2>
                         <div className={classes.numberedList}>
                             {instructionDisplay}
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Notes</h2>
+                        <div className='leftAlign descriptionRow'>
+                            <EditableTextArea initialText="Add Notes" onChange={(e) => setNotes(e.target.value)} text={notes} />
+
                         </div>
                     </div>
                 </div>

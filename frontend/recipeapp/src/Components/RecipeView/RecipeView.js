@@ -123,6 +123,12 @@ export default function RecipeView() {
                             {displaySteps}
                         </ol>
                     </div>
+                    <div>
+                        <h2>Notes</h2>
+                        <div>
+                            {recipe.notes}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
