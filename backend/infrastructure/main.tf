@@ -184,6 +184,20 @@ module "remove_favorite_lambda" {
   lambda_name = "remove-favorite-lambda"
   handler_path = "index.handler"
 }
+module "add_comment_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/addComment"
+  output_path = "${path.module}/addComment.zip"
+  lambda_name = "add-comment-lambda"
+  handler_path = "index.handler"
+}
+module "remove_comment_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/removeComment"
+  output_path = "${path.module}/removeComment.zip"
+  lambda_name = "remove-comment-lambda"
+  handler_path = "index.handler"
+}
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
   name          = "RecipeAppsGateway"
@@ -422,6 +436,34 @@ module "remove_favorites" {
   method="POST"
   lambda_arn = module.remove_favorite_lambda.lambda_arn
   lambda_function_name = module.remove_favorite_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "add_comment_api" {
+  permission_name = "add-comment-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="add-comment"
+  method="POST"
+  lambda_arn = module.add_comment_lambda.lambda_arn
+  lambda_function_name = module.add_comment_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "NONE"
+  authorizer_id = ""
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "remove_comment_api" {
+  permission_name = "remove-comment-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="remove-comment"
+  method="POST"
+  lambda_arn = module.remove_comment_lambda.lambda_arn
+  lambda_function_name = module.remove_comment_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "NONE"

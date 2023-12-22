@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { GetCollections } from "../../API/CollectionApi";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import classes from './CollectionRow.module.css'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 const filter = createFilterOptions();
@@ -10,6 +10,7 @@ export default function CollectionRow({ collectionAdded }) {
     const [collections, setCollections] = useState([]);
     const [value, setValue] = useState(null);
     const [inEdit,setInEdit] = useState(false);
+    const [creatingCollection,setCreating] = useState(false);
     useEffect(() => {
         LoadCollections();
     }, [])
@@ -20,6 +21,7 @@ export default function CollectionRow({ collectionAdded }) {
         }
     }
     const addNewCollection = async (name) => {
+        setCreating(true);
         console.log(name);
         const collection = { name }
         let url = '/create-collection'
@@ -40,6 +42,7 @@ export default function CollectionRow({ collectionAdded }) {
             collectionAdded(data);
             setValue(null);
         }
+        setCreating(false);
     }
     if(!inEdit){
         return <Button onClick={()=>setInEdit(true)}><AddCircleOutlineIcon/></Button>
@@ -55,6 +58,7 @@ export default function CollectionRow({ collectionAdded }) {
                 } else if (newValue && newValue.inputValue) {
                     // Create a new value from the user input
                     addNewCollection(newValue.inputValue)
+                    setValue(null);
                 } else {
                     collectionAdded(newValue);
                     setValue(null);
@@ -66,7 +70,6 @@ export default function CollectionRow({ collectionAdded }) {
                 const { inputValue } = params;
                 // Suggest the creation of a new value
                 const isExisting = options.some((option) => inputValue === option.title);
-                console.log(inputValue)
                 if (inputValue !== '' && !isExisting) {
                     filtered.push({
                         inputValue,
@@ -97,7 +100,7 @@ export default function CollectionRow({ collectionAdded }) {
             sx={{ width: 300 }}
             freeSolo
             renderInput={(params) => (
-                <TextField {...params} label="Add Collection" size="small"/>
+                <div className={classes.loadingRow}><TextField {...params} disabled={creatingCollection} label="Add Collection" size="small"/>{creatingCollection? <CircularProgress/>:<></>} </div>
             )}
         />
         <Button onClick={()=>setInEdit(false)}>X</Button>
