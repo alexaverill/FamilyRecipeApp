@@ -10,7 +10,7 @@
     border-radius: 0.5rem;
     border: 1px solid #EDEDED;
     text-decoration: none;
-    /* min-height: 125px; */
+    max-height: 138px;
 }
 
 .clickableCard {
