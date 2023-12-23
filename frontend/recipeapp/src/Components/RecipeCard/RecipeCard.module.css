@@ -15,7 +15,7 @@
 
 .clickableCard {
     display: flex;
-    width: 100%;
+    width: 90%;
 }
 
 .card:hover {
@@ -26,7 +26,9 @@
 }
 
 .cardImg {
-    min-width: 25%;
+    width:140px;
+    height:136px;
+    min-width: 140px;
 }
 
 .img{
@@ -76,12 +78,23 @@
     text-overflow: ellipsis; 
     height:33px;
 }
+.scrollabe{
+  overflow-y: auto;
+}
 
 .collections {
     gap: .5rem;
     display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    max-width: 80%;
+    scrollbar-width: none;
+    
 }
-
+.collections::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
 .textContent {
 
     display: flex;

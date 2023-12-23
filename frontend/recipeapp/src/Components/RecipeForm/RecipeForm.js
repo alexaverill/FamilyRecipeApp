@@ -14,6 +14,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { CreateRecipe, DeleteRecipe } from '../../API/RecipeApi';
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
+import IconCreation from '../IconCreation/IconCreation';
+import EditIcon from '@mui/icons-material/Edit';
 export default function RecipeForm() {
     const initialTitleText = 'Tap to enter a Title';
     const initialDescriptionText = 'Tap to enter a description';
@@ -32,6 +34,13 @@ export default function RecipeForm() {
     const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [alert, setAlert] = useState({ type: 'success', visible: false, message: '' });
     const { user } = useContext(UserContext);
+    const [icon, setIcon] = useState('seven.svg');
+    const [initialIconIdx,setIconIdx] = useState(0);
+    const [initialColorIdx,setColorIdx] = useState(0);
+    const colors = ["#FF9F2F","#3CCEE2","#227C88","#4DC643","#FF5D8E","#DD3F65","#B955C2","#7B3981"];
+    const icons = ["seven.svg","two.svg","three.svg","four.svg","five.svg","six.svg","one.svg","eight.svg"];
+    const [color,setColor] = useState('#FF9F2F');
+    const [editIcon,setEditIcon]= useState(false);
     const arrayHasValidEntry =(arr)=>{
         return arr[0].length>0; // we always have at least an empty entry in the states we are testing above
     }
@@ -54,6 +63,13 @@ export default function RecipeForm() {
             if (recipe.notes) {
                 setNotes(recipe.notes);
             }
+        }else{
+            console.log("Randomuze");
+            let colorIdx = Math.floor(Math.random()*8);
+            let iconIdx = Math.floor(Math.random()*8);
+            console.log(colorIdx)
+            setIcon(icons[iconIdx]);
+            setColor(colors[colorIdx]);
         }
     }, [location.state]);
     const handleIngredientEnter = (event) => {
@@ -140,11 +156,10 @@ export default function RecipeForm() {
             ingredients,
             steps,
             notes,
-            user
+            user,
+            image:{icon,color}
         };
-        console.log(eventObj);
         let data = CreateRecipe(eventObj);
-        console.log(data);
         if (data) {
             setRecipeId(data.recipeId);
             setAlert({
@@ -173,6 +188,12 @@ export default function RecipeForm() {
         await DeleteRecipe(recipeId);
         navigate('/');
     }
+    const handleColorChanged = (color) =>{
+        setColor(color);
+    }
+    const handleIconChanged = (icon) =>{
+        setIcon(icon);
+    }
 
     const handleDelete = async (collectionId, name) => {
         console.log(collectionId);
@@ -187,6 +208,8 @@ export default function RecipeForm() {
         return <Chip label={collection.name} onDelete={() => handleDelete(collection.collectionId)} />;
     }
     );
+    const imagePath = `/images/${icon}`;
+    let imageStyle = {backgroundColor:color};
     return (
         <div className="content">
             <ConfirmationDialog open={confirmationOpen} onClose={handleConfirmationClose} onConfirm={handleConfirmation} />
@@ -195,7 +218,10 @@ export default function RecipeForm() {
                     {alert.message}
                 </Alert> : <></>}
             <div className='twoColumn'>
-                <div><img src="/placeholder_1.png" /></div>
+                <div className={classes.imageColumn}>
+                <div className={classes.recipeImage} style={imageStyle}><img src={imagePath} /><Button className={classes.edit} onClick={()=>setEditIcon(!editIcon)}><EditIcon/></Button></div>
+                {editIcon?<IconCreation colorChanged={(c)=>setColor(c)} iconChanged={(i)=>setIcon(i)} initialColor={colors.findIndex(c => c == color)} initialIcon={icons.findIndex(i => i ==icon)} colors={colors} icons={icons}/>:<></>}
+                </div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
                         <div className='recipeTitle'><EditableText initialText={initialTitleText} onChange={(e) => setTitle(e.target.value)} text={title} /></div>

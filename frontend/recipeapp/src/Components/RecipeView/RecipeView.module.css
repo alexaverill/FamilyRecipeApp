@@ -22,11 +22,9 @@
     height: .75rem;
 }
 .image{
-    width: 12.5rem;
-    height: 12.5rem; 
-}
-.image > img{
-    width:100%;
+    border-radius: 4px;
+    width:200px;
+    height:200px;
 }
 .collections {
     display: flex;

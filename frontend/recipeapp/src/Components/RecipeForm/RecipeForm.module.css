@@ -91,3 +91,24 @@
     font-weight: 400;
     line-height: normal;
 }
+.recipeImage{
+    border-radius: 4px;
+    width:200px;
+    height:200px;
+}
+.imageColumn{
+    position:relative;
+}
+.edit {
+	position: absolute;
+	z-index: 3;
+	left: 5px;
+	top: -45px;
+	background-color: white !important;
+	border-radius: 50px !important;
+	height: 35px;
+	min-width: 0 !important;
+}
+.edit:hover{
+    background-color: #EDEDED;
+}

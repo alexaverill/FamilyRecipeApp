@@ -132,11 +132,16 @@ export default function RecipeView() {
         'list', 'bullet', 'indent',
         'link', 'image'
     ]
-
+    let color = recipe.image?.color ?? "#FF9F2F";
+    let style = { backgroundColor: color };
+    let image = recipe.image?.icon ?? "seven.svg";
+    let imagePath = `/images/${image}`;
     return (
         <div className="content">
             <div className="twoColumn">
-                <div className={classes.image}><img src="/images/one.svg" /></div>
+            <div className={classes.image} style={style}>
+                    <img className={classes.img} src={imagePath} />
+                </div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
                         <div className="recipeTitle">{recipe.title}</div>
