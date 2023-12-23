@@ -102,3 +102,14 @@
     gap: .25rem;
 
 }
+@media (max-width: 500px) {
+.cardTitle {
+	max-width: 100px;
+	text-overflow: hidden;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.collections{
+    display: none;
+}
+}

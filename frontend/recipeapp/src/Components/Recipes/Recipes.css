@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    width: 80%;
 }
 .search-and-add {
     display: flex;
@@ -18,10 +18,11 @@
     gap: 1.5rem 2.5rem;
     flex-wrap: wrap;
 }
-@media (max-width: 400px) {
+@media (max-width: 500px) {
     .recipeHeader {
         display: flex;
         flex-direction: column;
+        width: 100%;
     }
     .search-and-add{
         display: flex;
@@ -32,3 +33,4 @@
         margin-top:5%;
     }
 }
+

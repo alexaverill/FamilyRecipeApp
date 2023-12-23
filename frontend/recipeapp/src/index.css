@@ -12,13 +12,13 @@ code {
 }
 .content{
   width:90%;
-  margin: 0 auto;
+  margin: 4rem auto;
+  margin-bottom: 4rem;
 }
 .twoColumn{
   display:flex;
   flex:1 0 0;
   gap: 1.5rem;
-  margin:4rem auto;
   width:75vw;
 }
 .recipes{
@@ -57,7 +57,10 @@ font-weight: 700;
   color: lightgray;
   background-color: #b73755;
 }
-@media (max-width:400px) {
+@media (max-width:510px) {
+  .content{
+    margin-top:0;
+  }
   .twoColumn{
     display:flex;
     flex-direction: column;

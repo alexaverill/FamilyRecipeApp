@@ -1,12 +1,71 @@
-.loginForm{
+.loginForm {
     display: flex;
     flex-direction: column;
-    gap:1rem;
-    margin-top:1rem;
-}
-.loginRow{
-    display:flex;
     align-items: center;
     gap: 1rem;
+    margin-top: 1rem;
+}
+.loginForm > button{
+    min-width: 20vw;
+}
+.loginDialog{
+    width:35vw;
+    margin:0 auto;
+}
+.loginRow {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    align-items: start;
+    gap: .25rem;
+    width: 100%;
 
+}
+.loginRow > div{
+    width: 100% !important;
+}
+.loginRow>span {
+    color: #000;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.cardImg {
+    background-color: #DD3F65;
+    border-radius: 4px;
+    width: 82px;
+    height: 82px;
+}
+
+.heading {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.title {
+    color: #000;
+    font-family: Poppins;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.subtitle {
+    color: #000;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.img {
+    width: 100%;
 }

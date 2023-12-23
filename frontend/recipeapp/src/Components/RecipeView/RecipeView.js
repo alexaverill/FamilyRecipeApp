@@ -50,7 +50,7 @@ export default function RecipeView() {
     }, []);
     useEffect(()=>{
         if(recipe.comments){
-            setComments(recipe.comments)
+            setComments(recipe.comments.reverse())
         }
     },[recipe])
     useEffect(() => {
@@ -108,7 +108,7 @@ export default function RecipeView() {
             
         }
         console.log(eventObj);
-        setComments([...comments,commentObj]);
+        setComments([commentObj,...comments]);
         setComment('');
         await AddComment(eventObj);
         
@@ -116,7 +116,14 @@ export default function RecipeView() {
     }
     const displayComments = comments.map(comment=>{
         // console.log(comment);
-        return <div className={classes.comment} dangerouslySetInnerHTML={{__html:comment.comment}} />;
+        return (
+            <div className={classes.commentContainer}>
+                <div className={classes.commentName}>{comment.user.username}</div>
+            <div className={classes.comment} dangerouslySetInnerHTML={{__html:comment.comment}} />
+            <div className={classes.commentDate}>{new Date(comment.datetime).toDateString()}</div>
+            </div>
+        
+        );
     })
     let modules = {
         toolbar: [
@@ -179,14 +186,14 @@ export default function RecipeView() {
                         </div>
                     </div>
                     <div className={classes.comments}>
-                        <h2>Comments</h2>
-                        <div>
-                            {displayComments}
-                        </div>
+                        <h2>Comments</h2>                        
                         <div>
                             <ReactQuill theme="snow" value={comment} modules={modules}
                                 formats={formats} onChange={setComment} />
                                 <Button variant="contained" onClick={saveComment}>Save</Button>
+                        </div>
+                        <div>
+                            {displayComments}
                         </div>
                     </div>
                 </div>

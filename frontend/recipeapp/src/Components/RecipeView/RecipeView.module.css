@@ -21,11 +21,13 @@
 .editImg {
     height: .75rem;
 }
-.image{
+
+.image {
     border-radius: 4px;
-    width:200px;
-    height:200px;
+    width: 200px;
+    height: 200px;
 }
+
 .collections {
     display: flex;
     flex-direction: row;
@@ -33,15 +35,47 @@
     gap: 1rem;
     flex-wrap: wrap;
 }
-.comment > p > img{
+
+.comment>p>img {
     max-width: 600px;
 }
-@media (max-width:400px) {
-    .image{
+
+.commentContainer {
+    display: flex;
+    padding: 1rem 0rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    align-self: stretch;
+    border-bottom: solid 1px #B2B2B2;
+}
+
+.commentName {
+    color: #000;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.commentDate {
+    color: #B2B2B2;
+    font-family: Inter;
+    font-size: 0.625rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
+@media (max-width:500px) {
+    .image {
         display: none;
     }
-    .titleRow{
+
+    .titleRow {
         flex-direction: column;
-        gap:1rem;
+        gap: 1rem;
     }
 }
