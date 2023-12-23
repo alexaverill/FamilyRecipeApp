@@ -21,7 +21,7 @@ export default function Recipes() {
         setIsLoading(false);
     }
     let recipeDisplay = recipes?.map((recipe) => {
-        if(favorites.length>0 && favorites?.find((fav)=> { 
+        if(favorites?.length>0 && favorites?.find((fav)=> { 
             return fav === recipe.recipeId
         })){
             return <RecipeCard recipe={recipe} key={recipe.recipeId} favorited={true}/>; 

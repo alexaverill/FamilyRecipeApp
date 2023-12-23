@@ -8,6 +8,14 @@ terraform {
 
   required_version = ">= 1.2.0"
 }
+variable "cognito_id" {
+    type        = string
+    description = "Cognito id"
+}
+variable "cognito_url" {
+    type        = string
+    description = "Cognito URL"
+}
 variable "region" {
   type = string
   default = "us-west-2"
@@ -244,21 +252,21 @@ resource "aws_cloudwatch_log_group" "api_gw_stage" {
   retention_in_days = 30
 }
 
-# resource "aws_apigatewayv2_authorizer" "auth" {
-#   # name          = "CognitoUserPoolAuthorizer"
-#   # type          = "JWT"
-#   # rest_api_id   = aws_apigatewayv2_api.familylistapp_gateway.id
-#   # provider_arns = ["${aws_cognito_user_pool.pool.arn}"]
-#   api_id           = aws_apigatewayv2_api.familylistapp_gateway.id
-#   authorizer_type  = "JWT"
-#   identity_sources = ["$request.header.Authorization"]
-#   name             = "authorizer"
+resource "aws_apigatewayv2_authorizer" "auth" {
+  # name          = "CognitoUserPoolAuthorizer"
+  # type          = "JWT"
+  # rest_api_id   = aws_apigatewayv2_api.familylistapp_gateway.id
+  # provider_arns = ["${aws_cognito_user_pool.pool.arn}"]
+  api_id           = aws_apigatewayv2_api.recipeapp-gateway.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "authorizer"
 
-#   jwt_configuration {
-#      audience = [aws_cognito_user_pool_client.client.id]
-#     issuer   = "https://${aws_cognito_user_pool.pool.endpoint}"
-#   }
-# }
+  jwt_configuration {
+     audience = [var.cognito_id]
+    issuer   = var.cognito_url
+  }
+}
 
 module "create_recipe_api" {
   permission_name = "create-recipe"
@@ -270,8 +278,8 @@ module "create_recipe_api" {
   lambda_function_name = module.create_recipe_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "create_collection_api" {
@@ -284,8 +292,8 @@ module "create_collection_api" {
   lambda_function_name = module.create_collection_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "get_collections_api" {
@@ -298,8 +306,8 @@ module "get_collections_api" {
   lambda_function_name = module.get_collections_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "get_collection_api" {
@@ -312,8 +320,8 @@ module "get_collection_api" {
   lambda_function_name = module.get_collection_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "add_to_collections_api" {
@@ -326,8 +334,8 @@ module "add_to_collections_api" {
   lambda_function_name = module.add_to_collections_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "remove_from_collections_api" {
@@ -340,8 +348,8 @@ module "remove_from_collections_api" {
   lambda_function_name = module.remove_from_collections_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "get_recipes_api" {
@@ -354,8 +362,8 @@ module "get_recipes_api" {
   lambda_function_name = module.get_recipes_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "get_recipe_api" {
@@ -368,8 +376,8 @@ module "get_recipe_api" {
   lambda_function_name = module.get_recipe_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "delete_recipe_api" {
@@ -382,8 +390,8 @@ module "delete_recipe_api" {
   lambda_function_name = module.delete_recipe_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "query_recipe_api" {
@@ -396,8 +404,8 @@ module "query_recipe_api" {
   lambda_function_name = module.query_recipe_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "add_favorite" {
@@ -410,8 +418,8 @@ module "add_favorite" {
   lambda_function_name = module.add_favorite_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "get_favorites" {
@@ -424,8 +432,8 @@ module "get_favorites" {
   lambda_function_name = module.get_favorite_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "remove_favorites" {
@@ -438,8 +446,8 @@ module "remove_favorites" {
   lambda_function_name = module.remove_favorite_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "add_comment_api" {
@@ -452,8 +460,8 @@ module "add_comment_api" {
   lambda_function_name = module.add_comment_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }
 module "remove_comment_api" {
@@ -466,7 +474,7 @@ module "remove_comment_api" {
   lambda_function_name = module.remove_comment_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
-  auth_type = "NONE"
-  authorizer_id = ""
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
   gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
 }

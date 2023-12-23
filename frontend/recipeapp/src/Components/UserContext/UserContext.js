@@ -23,7 +23,11 @@ export const UserContextProvider = ({ children }) => {
         setIsLoading(false);
     }
     const AddFavorite = (id) => {
-        setFavorites([...favorites, id]);
+        if(favorites){
+            setFavorites([...favorites, id]);
+        }else{
+            setFavorites([id]);
+        }
     }
     const RemoveFavorite = (id) => {
         favorites.splice(favorites.find(fav => fav == id), 1);

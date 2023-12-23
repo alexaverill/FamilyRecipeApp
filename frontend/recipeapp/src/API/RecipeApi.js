@@ -1,6 +1,9 @@
+import { genericApiCall } from "./BaseApi";
+
 export async function QueryRecipes(eventObj){
     let url = '/query-recipes';
     return await genericApiCall(url,"POST",eventObj);
+}
 export async function GetRecipes(){
     let url = '/get-recipes'
     return await genericApiCall(url,"GET",null);
