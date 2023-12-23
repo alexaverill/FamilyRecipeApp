@@ -1,6 +1,18 @@
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import { signOut } from 'aws-amplify/auth';
 import './Navbar.css'
 export default function NavBar(){
+    const navigate = useNavigate();
+    const handleSignOut = ()=>{
+        console.log("Signing out");
+        try{
+            signOut();
+            console.log("Navigate");
+            navigate('/login');
+        }catch(e){
+            console.log(e);
+        }
+    }
     return (
     <div className="navbar">
         <div className="title-row">
@@ -12,7 +24,7 @@ export default function NavBar(){
         </div>
         <div className="links">
             <Link to="/favorites">My Favorites</Link>
-            <Link>Logout</Link>
+            <Link onClick={()=>handleSignOut()}>Logout</Link>
         </div>
     </div>
     )

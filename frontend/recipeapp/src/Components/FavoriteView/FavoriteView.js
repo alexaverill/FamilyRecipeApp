@@ -6,8 +6,8 @@ import { GetCollection } from "../../API/CollectionApi";
 import { CircularProgress } from "@mui/material";
 import { UserContext } from "../UserContext/UserContext";
 export default function FavoriteView() {
-    const {favorites} = useContext(UserContext);
-    const {collectionId} = useParams();
+    const { favorites } = useContext(UserContext);
+    const { collectionId } = useParams();
     const location = useLocation();
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -16,15 +16,17 @@ export default function FavoriteView() {
     }, []);
     const getRecipes = async () => {
         setLoading(true);
-        if(!favorites){return;}
-        let ids = favorites.map((fav)=>{return {recipeId:fav}});
+        if (!favorites) { console.log("No Favories"); return; }
+        let ids = favorites.map((fav) => { return { recipeId: fav } });
         console.log(ids);
-        let data = await QueryRecipes({ recipes: ids });
-        setRecipes(data);
+        if (ids.length > 0) {
+            let data = await QueryRecipes({ recipes: ids });
+            setRecipes(data);
+        }
         setLoading(false);
     };
     let recipeDisplay = recipes?.map((recipe) => {
-        return <RecipeCard recipe={recipe} favorited={favorites.includes(recipe.recipeId)}/>; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
+        return <RecipeCard recipe={recipe} favorited={favorites.includes(recipe.recipeId)} />; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
     })
     if (loading) {
         return (

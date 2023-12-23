@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { GetCollections } from "../../API/CollectionApi";
+import { CreateCollection, GetCollections } from "../../API/CollectionApi";
 import { Button, CircularProgress } from "@mui/material";
 import classes from './CollectionRow.module.css'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
@@ -22,22 +22,8 @@ export default function CollectionRow({ collectionAdded }) {
     }
     const addNewCollection = async (name) => {
         setCreating(true);
-        console.log(name);
         const collection = { name }
-        let url = '/create-collection'
-        let data = await fetch(process.env.REACT_APP_API_URL + url, {
-            method: "POST",
-            headers: {
-                //'Authorization':`Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(collection),
-        })
-            .then((response) => response.json())
-            .catch((err) => {
-                console.log(err);
-                console.log(err.message);
-            });
+        let data = await CreateCollection(collection);
         if(data){
             collectionAdded(data);
             setValue(null);
