@@ -6,7 +6,7 @@ import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
 import { UserContext } from "../UserContext/UserContext";
-import { GetRecipe,AddComment,RemoveComment } from "../../API/RecipeApi";
+import { GetRecipe, AddComment, RemoveComment } from "../../API/RecipeApi";
 import EditIcon from '@mui/icons-material/Edit'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -32,7 +32,7 @@ export default function RecipeView() {
     })
     const loadRecipe = async () => {
         setIsLoading(true);
-        let data = GetRecipe(recipeId); 
+        let data = GetRecipe(recipeId);
         if (data) {
             setRecipe(data);
             setCollections(data.collections)
@@ -48,17 +48,19 @@ export default function RecipeView() {
         }
         checkIfFavorited();
     }, []);
-    useEffect(()=>{
-        if(recipe.comments){
+    useEffect(() => {
+        if (recipe.comments) {
             setComments(recipe.comments.reverse())
         }
-    },[recipe])
+    }, [recipe])
     useEffect(() => {
         checkIfFavorited();
     }, [favorites])
     const checkIfFavorited = () => {
-        let value = favorites.includes(recipeId)
-        setIsFavorited(value);
+        if (favorites) {
+            let value = favorites.includes(recipeId)
+            setIsFavorited(value);
+        }
     }
     if (isLoading) {
         return (<div className="content">
@@ -93,36 +95,36 @@ export default function RecipeView() {
         return <Chip label={collection.name} onDelete={() => handleDelete(collection.collectionId)} />;
     }
     );
-    const saveComment = async ()=>{
+    const saveComment = async () => {
         let cleanComment = DOMPurify.sanitize(comment);
         console.log(cleanComment);
 
-        let commentObj ={
-            comment:cleanComment,
-            datetime:Date.now(),
+        let commentObj = {
+            comment: cleanComment,
+            datetime: Date.now(),
             user
         }
         let eventObj = {
             recipeId,
-            comment:commentObj
-            
+            comment: commentObj
+
         }
         console.log(eventObj);
-        setComments([commentObj,...comments]);
+        setComments([commentObj, ...comments]);
         setComment('');
         await AddComment(eventObj);
-        
+
 
     }
-    const displayComments = comments.map(comment=>{
+    const displayComments = comments.map(comment => {
         // console.log(comment);
         return (
             <div className={classes.commentContainer}>
                 <div className={classes.commentName}>{comment.user.username}</div>
-            <div className={classes.comment} dangerouslySetInnerHTML={{__html:comment.comment}} />
-            <div className={classes.commentDate}>{new Date(comment.datetime).toDateString()}</div>
+                <div className={classes.comment} dangerouslySetInnerHTML={{ __html: comment.comment }} />
+                <div className={classes.commentDate}>{new Date(comment.datetime).toDateString()}</div>
             </div>
-        
+
         );
     })
     let modules = {
@@ -146,7 +148,7 @@ export default function RecipeView() {
     return (
         <div className="content">
             <div className="twoColumn">
-            <div className={classes.image} style={style}>
+                <div className={classes.image} style={style}>
                     <img className={classes.img} src={imagePath} />
                 </div>
                 <div className='recipes'>
@@ -158,7 +160,7 @@ export default function RecipeView() {
                                 <></>}
                             {/* <Button><img src="/download.png" /></Button> */}
                             <FavoriteButton favorited={isFavorited} />
-                            {/* <Link component="button" to="/create" state={{recipe,variation:true}}className="recipeLinkButton">Add Variation</Link> */}
+                            <Link component="button" to="/create" state={{ recipe, variation: true, parentId: recipeId }} className="recipeLinkButton">Add Variation</Link>
                         </div>
                     </div>
                     <div className='leftAlign descriptionRow'>
@@ -186,11 +188,11 @@ export default function RecipeView() {
                         </div>
                     </div>
                     <div className={classes.comments}>
-                        <h2>Comments</h2>                        
+                        <h2>Comments</h2>
                         <div>
                             <ReactQuill theme="snow" value={comment} modules={modules}
                                 formats={formats} onChange={setComment} />
-                                <Button variant="contained" onClick={saveComment}>Save</Button>
+                            <Button variant="contained" onClick={saveComment}>Save</Button>
                         </div>
                         <div>
                             {displayComments}

@@ -1,15 +1,17 @@
 import classes from './Login.module.css'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from 'aws-amplify/auth'
 import { TextField } from '@mui/material';
 import { Button } from '@mui/material';
+import { UserContext } from '../UserContext/UserContext';
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState(false);
     let navigate = useNavigate();
+    let {RefreshUser} = useContext(UserContext)
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(username)
@@ -21,6 +23,7 @@ export default function Login() {
             }
         }).then((result) => {
             console.log(result);
+            RefreshUser();
             navigate("/");
 
         }).catch((err) => {

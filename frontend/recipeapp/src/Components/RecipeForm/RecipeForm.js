@@ -48,10 +48,8 @@ export default function RecipeForm() {
     useEffect(() => {
         if (location.state) {
             let recipe = location.state.recipe;
-            console.log(location.state);
             if (location.state.variation) {
-                console.log("Is Variation" + recipe.recipeId);
-                setParentId(recipe.recipeId);
+                setParentId(location.state.parentId);
                 delete recipe.recipeId;
             }
             setRecipeId(recipe.recipeId);
@@ -59,12 +57,13 @@ export default function RecipeForm() {
             setDescription(recipe.description);
             setIngredients(recipe.ingredients);
             setSteps(recipe.steps);
+            setColor(recipe.image.color);
+            setIcon(recipe.image.icon);
             setCollections(recipe.collections);
             if (recipe.notes) {
                 setNotes(recipe.notes);
             }
         }else{
-            console.log("Randomuze");
             let colorIdx = Math.floor(Math.random()*8);
             let iconIdx = Math.floor(Math.random()*8);
             console.log(colorIdx)
@@ -159,6 +158,7 @@ export default function RecipeForm() {
             user,
             image:{icon,color}
         };
+        console.log(eventObj);
         let data = CreateRecipe(eventObj);
         if (data) {
             setRecipeId(data.recipeId);

@@ -6,7 +6,6 @@
     display: flex;
     flex-direction: row;
     background-color: hsba(0, 0%, 100%, 1);
-    width: 37.5rem;
     border-radius: 0.5rem;
     border: 1px solid #EDEDED;
     text-decoration: none;

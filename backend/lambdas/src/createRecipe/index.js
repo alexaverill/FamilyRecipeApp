@@ -2,16 +2,24 @@
 import { randomUUID } from 'crypto';
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetCommand, PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { parse } from 'path';
 const client = new DynamoDBClient({ region: "us-west-2" });
 const docClient = DynamoDBDocumentClient.from(client);
 
 export const handler = async (event, context) => {
   console.log('EVENT: \n' + JSON.stringify(event, null, 2));
   let parsedEvent = JSON.parse(event.body);
+  let shouldLinkToParent = false;
   if (!parsedEvent.recipeId) {
     parsedEvent.recipeId = randomUUID();
+    //new recipe check if we have a parentId to linkt to this recipe. 
+    if (parsedEvent.parentId) {
+      shouldLinkToParent = true;
+    }
   }
-  parsedEvent.userId = parsedEvent.userId.toString();
+  if(parsedEvent.userId){
+    parsedEvent.userId = parsedEvent.userId.toString();
+  }
   try {
     const command = new PutCommand({
       TableName: "Recipes",
@@ -28,6 +36,10 @@ export const handler = async (event, context) => {
       statusCode: 500,
       body: JSON.stringify(error)
     };
+  }
+  //link to parent now that its saved. 
+  if (shouldLinkToParent) {
+    await AddChildToParent(parsedEvent.parentId,parsedEvent.recipeId);
   }
   //add to collection array if it doesn't exist
   console.log(parsedEvent.collections);
@@ -80,4 +92,32 @@ const updateCollection = async (collection) => {
 
   const response = await docClient.send(command, { removeUndefinedValues: true });
   console.log(response);
+}
+const AddChildToParent = async (parentId,recipeId) =>{
+  try {
+    const getParent = new GetCommand({
+      TableName: "Recipes",
+      Key: {
+        recipeId: parentId
+      }
+    });
+    console.log(`Parentid: ${parentId}`);
+    const parent = await docClient.send(getParent);
+    let recipe = parent.Item;
+    if(recipe.children){
+      recipe.children = [...recipe.children,recipeId];
+    }else{
+      recipe.children = [recipeId];
+    }
+    console.log(recipe);
+    const command = new PutCommand({
+      TableName: "Recipes",
+      Item: recipe
+    });
+
+    const response = await docClient.send(command);
+    console.log(response);
+  }catch(e){
+    console.log(e);
+  }
 }

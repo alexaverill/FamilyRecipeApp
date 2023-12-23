@@ -33,9 +33,12 @@ export const UserContextProvider = ({ children }) => {
         favorites.splice(favorites.find(fav => fav == id), 1);
         setFavorites(favorites);
     }
+    const RefreshUser = () =>{
+        getUserAndSession();
+    }
     const { Provider } = UserContext;
     return (
-        <Provider value={{ user, isLoading, favorites, AddFavorite, RemoveFavorite }}>
+        <Provider value={{ user, isLoading, favorites, AddFavorite, RemoveFavorite,RefreshUser }}>
             {children}
         </Provider>
     )
