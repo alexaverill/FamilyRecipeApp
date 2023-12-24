@@ -46,7 +46,6 @@ resource "aws_dynamodb_table" "recipe-dynamodb-table" {
   global_secondary_index {
     name               = "UserIdIndex"
     hash_key           = "userId"
-    range_key          = "recipeId"
     projection_type    = "ALL"
   }
   tags = {

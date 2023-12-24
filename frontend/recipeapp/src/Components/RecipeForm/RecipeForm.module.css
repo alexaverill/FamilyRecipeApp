@@ -60,15 +60,18 @@
     display: flex;
     flex-direction: row;
     max-height: 3rem;
+    
 }
 
 .filledButton {
     background: #DD3F65;
+    font-weight: bold;
 }
 
 .filledButton:hover {
     background-color: #b73755;
     color: lightgray;
+    font-weight: bold;
 }
 
 .collections {
@@ -111,4 +114,9 @@
 }
 .edit:hover{
     background-color: #EDEDED;
+}
+
+.addButton{
+    width: 12rem;
+   font-weight: bold;
 }

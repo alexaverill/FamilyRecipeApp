@@ -45,7 +45,7 @@ export const handler = async (event, context) => {
     }
 
 };
-removeRecipeIdFromParent = async (parentId,recipeId) =>{
+const removeRecipeIdFromParent = async (parentId,recipeId) =>{
     const getParent = new GetCommand({
         TableName: "Recipes",
         Key:{

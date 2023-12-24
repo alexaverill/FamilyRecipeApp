@@ -33,17 +33,11 @@ code {
 font-style: normal;
 font-weight: 700; 
 }
-.recipeLinkButton {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.25rem;
-  background: #DD3F65;
-  color: white;
-  text-decoration: none;
-}
 
 .recipeLinkButton:hover {
   color: lightgray;
   background-color: #b73755;
+  font-weight: bold;
 }
 .recipeLinkButton {
   padding: 0.5rem 0.75rem;
@@ -51,6 +45,7 @@ font-weight: 700;
   background: #DD3F65;
   color: white;
   text-decoration: none;
+  font-weight: bold;
 }
 
 .recipeLinkButton:hover {

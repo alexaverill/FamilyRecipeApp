@@ -66,14 +66,16 @@ export default function RecipeForm() {
         }else{
             let colorIdx = Math.floor(Math.random()*8);
             let iconIdx = Math.floor(Math.random()*8);
-            console.log(colorIdx)
             setIcon(icons[iconIdx]);
             setColor(colors[colorIdx]);
         }
     }, [location.state]);
+    const addIngredient =  ()=>{
+        setIngredients([...ingredients, '']);
+    }
     const handleIngredientEnter = (event) => {
         if (event.key === "Enter") {
-            setIngredients([...ingredients, '']);
+            addIngredient();
         }
     }
     const removeIngredient = (index, ingredient) => {
@@ -112,9 +114,12 @@ export default function RecipeForm() {
         }
         setSteps([...steps]);
     }
+    const addStep = ()=>{
+        setSteps([...steps, '']);
+    }
     const handleStepsEnter = (event) => {
         if (event.key === "Enter") {
-            setSteps([...steps, '']);
+           addStep();
         }
     }
     const setStepsChanged = (index, value) => {
@@ -122,7 +127,7 @@ export default function RecipeForm() {
         steps.splice(index, 1, value);
         setSteps([...steps]);
     }
-
+    
     let instructionDisplay = steps.map((step, index) => {
         var isLast = index === steps.length - 1 && index > 0;
         if (isLast) {
@@ -230,7 +235,7 @@ export default function RecipeForm() {
                         <div className='recipeTitle'><EditableText initialText={initialTitleText} onChange={(e) => setTitle(e.target.value)} text={title} /></div>
                         <div className={classes.actions}>
                             <Button onClick={handleRecipeDelete}><DeleteIcon /></Button>
-                            <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton} disabled={!canSave}>Save</LoadingButton>
+                            <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton} disabled={!canSave}>Save Recipe</LoadingButton>
                         </div>
                     </div>
                     <div className='leftAlign descriptionRow'>
@@ -246,13 +251,15 @@ export default function RecipeForm() {
                             {ingredientDisplay}
                         </div>
                         <div className={classes.listHint}>Tip: Hit enter to add a new ingredient.</div>
+                        <Button variant='contained' onClick={addIngredient} className={classes.addButton} disabled={!(ingredients[0].length>0)}>Add Ingredient</Button>
                     </div>
                     <div className={classes.listColumn}>
                         <h2>Steps</h2>
                         <div className={classes.numberedList}>
                             {instructionDisplay}
                         </div>
-                        <div className={classes.listHint}>Tip: Hit enter to add a new ingredient.</div>
+                        <div className={classes.listHint}>Tip: Hit enter to add a new step.</div>
+                        <Button variant='contained' onClick={addStep} className={classes.addButton} disabled={!(steps[0].length>0)}>Add Step</Button>
                     </div>
                     <div>
                         <h2>Notes</h2>
