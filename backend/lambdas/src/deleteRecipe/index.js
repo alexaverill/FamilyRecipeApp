@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, DeleteCommand,GetCommand,PutCommand } from "@aws-sdk/lib-dynamodb";
 const client = new DynamoDBClient({ region: "us-west-2" });
 const docClient = DynamoDBDocumentClient.from(client);
 export const handler = async (event, context) => {
