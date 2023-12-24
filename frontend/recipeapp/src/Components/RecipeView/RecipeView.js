@@ -145,6 +145,7 @@ export default function RecipeView() {
     let style = { backgroundColor: color };
     let image = recipe.image?.icon ?? "seven.svg";
     let imagePath = `/images/${image}`;
+    let recipeSource = recipe.source?.includes("http") ? <Link to={recipe.source} target="_blank">Source</Link> : <div className="source">{recipe.source}</div>;
     return (
         <div className="content">
             <div className="twoColumn">
@@ -165,6 +166,9 @@ export default function RecipeView() {
                     </div>
                     <div className='leftAlign descriptionRow'>
                         {recipe.description}
+                    </div>
+                    <div>
+                        {recipeSource}
                     </div>
                     <div className={classes.collections}>
                         {collectionList} <CollectionRow collectionAdded={addCollection} />
