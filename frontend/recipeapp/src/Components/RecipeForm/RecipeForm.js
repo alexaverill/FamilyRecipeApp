@@ -159,14 +159,17 @@ export default function RecipeForm() {
             image:{icon,color}
         };
         console.log(eventObj);
-        let data = CreateRecipe(eventObj);
+        let data = await CreateRecipe(eventObj);
+        console.log(data);
         if (data) {
+            console.log(data.recipeId);
             setRecipeId(data.recipeId);
             setAlert({
                 visible: true,
                 type: "success",
                 message: "Successfully saved recipe"
             });
+            
 
         } else {
             setAlert({

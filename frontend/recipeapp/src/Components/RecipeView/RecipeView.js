@@ -32,7 +32,7 @@ export default function RecipeView() {
     })
     const loadRecipe = async () => {
         setIsLoading(true);
-        let data = GetRecipe(recipeId);
+        let data = await GetRecipe(recipeId);
         if (data) {
             setRecipe(data);
             setCollections(data.collections)

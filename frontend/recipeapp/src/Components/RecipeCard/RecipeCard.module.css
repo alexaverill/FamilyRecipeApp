@@ -10,6 +10,8 @@
     border: 1px solid #EDEDED;
     text-decoration: none;
     max-height: 138px;
+    max-width: 28rem;
+    width:28rem;
 }
 
 .clickableCard {
