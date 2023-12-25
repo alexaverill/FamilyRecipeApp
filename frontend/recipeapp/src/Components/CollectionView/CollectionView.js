@@ -37,7 +37,7 @@ export default function CollectionsView() {
         setRecipes(data);
     };
     let recipeDisplay = recipes?.map((recipe) => {
-        return <RecipeCard recipe={recipe} favorited={favorites.includes(recipe.recipeId)}/>; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
+        return <RecipeCard recipe={recipe} favorited={favorites?.includes(recipe.recipeId)}/>; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>
     })
     if (loading) {
         return (

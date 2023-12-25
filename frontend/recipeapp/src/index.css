@@ -10,6 +10,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 .content{
   width:90%;
   margin: 4rem auto;
@@ -46,7 +47,7 @@ font-weight: 700;
   color: white;
   text-decoration: none;
   font-weight: bold;
-  height:23px;
+  min-height:23px;
 }
 
 .recipeLinkButton:hover {

@@ -4,7 +4,12 @@
     justify-content: space-between;
     align-items: center;
 }
-
+.title{
+    width:50%;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 700;
+}
 .leftAlign {
     text-align: left;
 }
@@ -113,7 +118,7 @@
 	min-width: 0 !important;
 }
 .edit:hover{
-    background-color: #EDEDED;
+    background-color: #EDEDED !important;
 }
 
 .addButton{

@@ -1,6 +1,7 @@
 import { fetchAuthSession } from "aws-amplify/auth";
 
 export async function genericApiCall(url,method,data){
+    console.log(url);
     let session = await fetchAuthSession();
     let token = session.tokens.accessToken.toString();
     if(method=="GET" || method=="DELETE"){
@@ -33,4 +34,7 @@ export async function genericApiCall(url,method,data){
         });  
 
 
+}
+export async function GetUsers(){
+    return await genericApiCall('/get-users',"GET",null);
 }

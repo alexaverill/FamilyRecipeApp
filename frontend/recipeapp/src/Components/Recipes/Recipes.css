@@ -2,14 +2,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 93%;
+    width: 80%;
+    margin-top:-1rem;
 }
 .search-and-add {
     display: flex;
     align-items: center;
     gap: 2.5rem;
 }
-
+.title-filter{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+}
 .recipeGrid {
     display: flex;
     width: 100%;
@@ -23,6 +28,10 @@
         display: flex;
         flex-direction: column;
         width: 100%;
+    }
+    .title-filter{
+        display:flex;
+        flex-direction: column;
     }
     .search-and-add{
         display: flex;

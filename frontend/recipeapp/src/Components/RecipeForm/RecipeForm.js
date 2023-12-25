@@ -47,6 +47,7 @@ export default function RecipeForm() {
     }
     const canSave = title.length > 0 && arrayHasValidEntry(steps) > 0 && arrayHasValidEntry(ingredients);
     useEffect(() => {
+        console.log(location.state);
         if (location.state) {
             let recipe = location.state.recipe;
             if (location.state.variation) {
@@ -58,7 +59,9 @@ export default function RecipeForm() {
             setDescription(recipe.description);
             setIngredients(recipe.ingredients);
             setSteps(recipe.steps);
-            setSource(recipe.source);
+            if (recipe.source) {
+                setSource(recipe.source);
+            }
             setColor(recipe.image.color);
             setIcon(recipe.image.icon);
             setCollections(recipe.collections);
@@ -95,7 +98,7 @@ export default function RecipeForm() {
     }
     let ingredientDisplay = ingredients.map((ingredient, index) => {
         var isLast = index === ingredients.length - 1 && index > 0;
-        if (isLast) {
+        if (isLast && ingredient=='') {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)} autoFocus></TextField>
@@ -132,7 +135,7 @@ export default function RecipeForm() {
 
     let instructionDisplay = steps.map((step, index) => {
         var isLast = index === steps.length - 1 && index > 0;
-        if (isLast) {
+        if (isLast && step == '') {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)} autoFocus></TextField>
@@ -235,14 +238,14 @@ export default function RecipeForm() {
                 </div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
-                        <div className='recipeTitle'><EditableText initialText={initialTitleText} onChange={(e) => setTitle(e.target.value)} text={title} /></div>
+                        <div className={classes.title}><EditableText label="Title" initialText={initialTitleText} onChange={(e) => setTitle(e.target.value)} text={title} /></div>
                         <div className={classes.actions}>
                             <Button onClick={handleRecipeDelete}><DeleteIcon /></Button>
                             <LoadingButton onClick={handleSave} loading={isLoading} variant="contained" className={classes.filledButton} disabled={!canSave}>Save Recipe</LoadingButton>
                         </div>
                     </div>
                     <div className='leftAlign descriptionRow'>
-                        <EditableTextArea initialText={initialDescriptionText} onChange={(e) => setDescription(e.target.value)} text={description} />
+                        <EditableTextArea label="Description" initialText={initialDescriptionText} onChange={(e) => setDescription(e.target.value)} text={description} />
 
                     </div>
                     <div>

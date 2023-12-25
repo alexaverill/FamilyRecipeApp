@@ -205,6 +205,13 @@ module "remove_comment_lambda" {
   lambda_name = "remove-comment-lambda"
   handler_path = "index.handler"
 }
+module "get_users_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getUsers"
+  output_path = "${path.module}/getUsers.zip"
+  lambda_name = "get-users-lambda"
+  handler_path = "index.handler"
+}
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
   name          = "RecipeAppsGateway"
@@ -471,6 +478,20 @@ module "remove_comment_api" {
   method="POST"
   lambda_arn = module.remove_comment_lambda.lambda_arn
   lambda_function_name = module.remove_comment_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get_users_api" {
+  permission_name = "get-users-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-users"
+  method="GET"
+  lambda_arn = module.get_users_lambda.lambda_arn
+  lambda_function_name = module.get_users_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "JWT"
