@@ -185,12 +185,13 @@ export default function RecipeView() {
                             {displaySteps}
                         </ol>
                     </div>
+                    {recipe.notes?.length>0?
                     <div>
                         <h2>Notes</h2>
                         <div>
                             {recipe.notes}
                         </div>
-                    </div>
+                    </div>:<></>}
                     <div className={classes.comments}>
                         <h2>Comments</h2>
                         <div>

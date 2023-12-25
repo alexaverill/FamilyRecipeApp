@@ -10,7 +10,8 @@
     border: 1px solid #EDEDED;
     text-decoration: none;
     max-height: 138px;
-    width: 34rem;
+    width: 30rem;
+    flex-grow:1;
 }
 
 .clickableCard {
@@ -122,27 +123,5 @@
     }
     .collections {
         display: none;
-    }
-}
-
-@media only screen and (min-width: 480px) and (max-width: 767px) {
-    .card{
-        max-width: 23rem;
-    }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 991px) {
-    .card{
-        max-width: 23rem;
-    }
-}
-@media only screen and (min-width: 992px) and (max-width:1499px) {
-    .card{
-        max-width: 23rem;
-    }
-}
-@media only screen and (min-width: 1500px) {
-    .card{
-        max-width: 24rem;
     }
 }
