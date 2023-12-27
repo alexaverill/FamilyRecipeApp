@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
-import { Button, CircularProgress, Chip } from "@mui/material";
+import { Button, CircularProgress, Chip, Switch,FormControlLabel, Tooltip } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
 import { UserContext } from "../UserContext/UserContext";
 import { GetRecipe, AddComment, RemoveComment } from "../../API/RecipeApi";
+import { useWakeLock } from 'react-screen-wake-lock';
 import EditIcon from '@mui/icons-material/Edit'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -23,6 +24,14 @@ export default function RecipeView() {
     const [isFavorited, setIsFavorited] = useState(false);
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState();
+
+    const { isSupported, released, request, release } = useWakeLock({
+        onRequest: () => console.log(`Screen Wake Lock: requested!`),
+        onError: () => console.log('An error happened 💥'),
+        onRelease: () => console.log(`Screen Wake Lock: released!`),
+      });
+
+
     let displaySteps = recipe.steps?.map((steps) => {
 
         return <li>{steps}</li>
@@ -160,6 +169,10 @@ export default function RecipeView() {
                                 <Button onClick={() => navigate('edit', { state: { recipe } })}><EditIcon /></Button> :
                                 <></>}
                             {/* <Button><img src="/download.png" /></Button> */}
+                            {isSupported?
+                            <Tooltip title="Keep Screen Awake">
+                               <Switch onChange={() => (released === false ? release() : request())}/></Tooltip>
+                                :<></>}
                             <FavoriteButton favorited={isFavorited} />
                             <Link component="button" to="/create" state={{ recipe, variation: true, parentId: recipeId }} className="recipeLinkButton">Add Variation</Link>
                         </div>
