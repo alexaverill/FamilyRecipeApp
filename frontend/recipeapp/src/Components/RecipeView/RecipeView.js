@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
-import { Button, CircularProgress, Chip, Switch,FormControlLabel, Tooltip } from "@mui/material";
+import { Button, ButtonGroup, CircularProgress, Chip, Switch, FormControlLabel, Tooltip } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import * as DOMPurify from 'dompurify';
+import multiply_recipe from "../../utilities/multiplyRecipe";
 
 export default function RecipeView() {
     const navigate = useNavigate();
@@ -24,12 +25,12 @@ export default function RecipeView() {
     const [isFavorited, setIsFavorited] = useState(false);
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState();
-
+    const [scaledIngredients, setScaledIngredients] = useState([]);
     const { isSupported, released, request, release } = useWakeLock({
         onRequest: () => console.log(`Screen Wake Lock: requested!`),
         onError: () => console.log('An error happened 💥'),
         onRelease: () => console.log(`Screen Wake Lock: released!`),
-      });
+    });
 
 
     let displaySteps = recipe.steps?.map((steps) => {
@@ -150,6 +151,13 @@ export default function RecipeView() {
         'list', 'bullet', 'indent',
         'link', 'image'
     ]
+    let scale = (multiple) => {
+        let newIngredients = recipe.ingredients.map((ingredient) => {
+            let scaled = multiply_recipe(ingredient, multiple);
+            return <li key={scaled}>{scaled}</li>
+        });
+        setScaledIngredients([...newIngredients]);
+    }
     let color = recipe.image?.color ?? "#FF9F2F";
     let style = { backgroundColor: color };
     let image = recipe.image?.icon ?? "seven.svg";
@@ -169,10 +177,10 @@ export default function RecipeView() {
                                 <Button onClick={() => navigate('edit', { state: { recipe } })}><EditIcon /></Button> :
                                 <></>}
                             {/* <Button><img src="/download.png" /></Button> */}
-                            {isSupported?
-                            <Tooltip title="Keep Screen Awake">
-                               <Switch onChange={() => (released === false ? release() : request())}/></Tooltip>
-                                :<></>}
+                            {isSupported ?
+                                <Tooltip title="Keep Screen Awake">
+                                    <Switch onChange={() => (released === false ? release() : request())} /></Tooltip>
+                                : <></>}
                             <FavoriteButton favorited={isFavorited} />
                             <Link component="button" to="/create" state={{ recipe, variation: true, parentId: recipeId }} className="recipeLinkButton">Add Variation</Link>
                         </div>
@@ -187,10 +195,22 @@ export default function RecipeView() {
                         {collectionList} <CollectionRow collectionAdded={addCollection} />
                     </div>
                     <div>
-                        <h2>Ingredients</h2>
-                        <ul className={classes.list}>
-                            {displayIngredients}
-                        </ul>
+                        <div>
+                            <h2>Ingredients</h2>
+                            <ButtonGroup variant="contained" aria-label="Basic button group">
+                                <Button onClick={() => scale(.5)}>1/2</Button>
+                                <Button onClick={() => scale(2)}>Two</Button>
+                                <Button onClick={() => scale(3)}>Three</Button>
+                            </ButtonGroup>
+                        </div>
+                        <div>
+
+                            {scaledIngredients.length > 0 ? 
+                            <ul className={classes.list}>{scaledIngredients}</ul> : 
+                            <ul className={classes.list}>
+                                {displayIngredients}
+                            </ul>}
+                        </div>
                     </div>
                     <div>
                         <h2>Steps</h2>
@@ -198,13 +218,13 @@ export default function RecipeView() {
                             {displaySteps}
                         </ol>
                     </div>
-                    {recipe.notes?.length>0?
-                    <div>
-                        <h2>Notes</h2>
+                    {recipe.notes?.length > 0 ?
                         <div>
-                            {recipe.notes}
-                        </div>
-                    </div>:<></>}
+                            <h2>Notes</h2>
+                            <div>
+                                {recipe.notes}
+                            </div>
+                        </div> : <></>}
                     <div className={classes.comments}>
                         <h2>Comments</h2>
                         <div>
