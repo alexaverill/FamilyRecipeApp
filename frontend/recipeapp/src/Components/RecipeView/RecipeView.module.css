@@ -10,7 +10,7 @@
 }
 
 .list>li {
-    margin-top:1rem;
+    margin-top: 1rem;
     line-height: 1.5rem;
 }
 
@@ -70,6 +70,21 @@
     text-transform: uppercase;
 }
 
+.ingredientHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ingredentScale{
+	align-content: center;
+	display: flex;
+}
+.ingredentScale input{
+    max-width: 3.5rem;
+}
+.ingredentScale button{
+    text-transform: none;
+}
 @media (max-width:500px) {
     .image {
         display: none;
