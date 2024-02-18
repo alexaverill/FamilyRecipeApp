@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import classes from "./RecipeView.module.css"
-import { Button, ButtonGroup, CircularProgress, Chip, Switch, FormControlLabel, Tooltip } from "@mui/material";
+import { Button, ButtonGroup, CircularProgress, Chip, Switch, TextField, Tooltip } from "@mui/material";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { RemoveFromCollection, AddToCollection } from "../../API/CollectionApi";
 import CollectionRow from "../CollectionRow/CollectionRow";
@@ -12,7 +12,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import * as DOMPurify from 'dompurify';
-import multiply_recipe from "../../utilities/multiplyRecipe";
+import {multiply_recipe,parseInputToFloat} from "../../utilities/multiplyRecipe";
 
 export default function RecipeView() {
     const navigate = useNavigate();
@@ -158,6 +158,17 @@ export default function RecipeView() {
         });
         setScaledIngredients([...newIngredients]);
     }
+    let handleScaleInputChanged = (event)=>{
+        console.log(event.target.value);
+        let value = event.target.value;
+        if(value.length >0){
+            let parsedValue= parseFloat(value);
+            console.log(parsedValue);
+            scale(parsedValue);
+        }else{
+            scale(1);
+        }
+    }
     let color = recipe.image?.color ?? "#FF9F2F";
     let style = { backgroundColor: color };
     let image = recipe.image?.icon ?? "seven.svg";
@@ -195,13 +206,16 @@ export default function RecipeView() {
                         {collectionList} <CollectionRow collectionAdded={addCollection} />
                     </div>
                     <div>
-                        <div>
+                        <div className={classes.ingredientHeader}>
                             <h2>Ingredients</h2>
-                            <ButtonGroup variant="contained" aria-label="Basic button group">
+                            <div className={classes.ingredentScale}>
+                            <ButtonGroup variant="outlined" size="medium">
                                 <Button onClick={() => scale(.5)}>1/2</Button>
-                                <Button onClick={() => scale(2)}>Two</Button>
-                                <Button onClick={() => scale(3)}>Three</Button>
+                                <Button onClick={() => scale(2)}>2</Button>   
+                                <TextField size="small" onChange={handleScaleInputChanged}></TextField>             
                             </ButtonGroup>
+                            
+                            </div>
                         </div>
                         <div>
 

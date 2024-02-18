@@ -10,7 +10,7 @@
 }
 
 .list>li {
-    margin-top:1rem;
+    margin-top: 1rem;
     line-height: 1.5rem;
 }
 
@@ -68,6 +68,19 @@
     font-weight: 500;
     line-height: normal;
     text-transform: uppercase;
+}
+
+.ingredientHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ingredentScale{
+	align-content: center;
+	display: flex;
+}
+.ingredentScale input{
+    max-width: 2rem;
 }
 
 @media (max-width:500px) {
