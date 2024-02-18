@@ -80,9 +80,11 @@
 	display: flex;
 }
 .ingredentScale input{
-    max-width: 2rem;
+    max-width: 3.5rem;
 }
-
+.ingredentScale button{
+    text-transform: none;
+}
 @media (max-width:500px) {
     .image {
         display: none;

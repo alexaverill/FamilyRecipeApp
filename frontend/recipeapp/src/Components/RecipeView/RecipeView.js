@@ -31,7 +31,7 @@ export default function RecipeView() {
         onError: () => console.log('An error happened 💥'),
         onRelease: () => console.log(`Screen Wake Lock: released!`),
     });
-
+    const [scaled, setScale] = useState(1);
 
     let displaySteps = recipe.steps?.map((steps) => {
 
@@ -159,13 +159,16 @@ export default function RecipeView() {
         setScaledIngredients([...newIngredients]);
     }
     let handleScaleInputChanged = (event)=>{
-        console.log(event.target.value);
+        
         let value = event.target.value;
+        
         if(value.length >0){
+            setScale(event.target.value)
             let parsedValue= parseFloat(value);
             console.log(parsedValue);
             scale(parsedValue);
         }else{
+            setScale(1)
             scale(1);
         }
     }
@@ -210,9 +213,10 @@ export default function RecipeView() {
                             <h2>Ingredients</h2>
                             <div className={classes.ingredentScale}>
                             <ButtonGroup variant="outlined" size="medium">
-                                <Button onClick={() => scale(.5)}>1/2</Button>
-                                <Button onClick={() => scale(2)}>2</Button>   
-                                <TextField size="small" onChange={handleScaleInputChanged}></TextField>             
+                                <Button onClick={() =>{setScale(.5); scale(.5)}} variant={scaled==.5?'contained':'outlined'}>1/2x</Button>
+                                <Button onClick={() => {setScale(1); scale(1)}} variant={scaled==1?'contained':'outlined'}>1x</Button>
+                                <Button onClick={() => {setScale(2); scale(2)}} variant={scaled==2?'contained':'outlined'}>2x</Button>   
+                                <TextField size="small" placeholder='Custom'onChange={handleScaleInputChanged}></TextField>             
                             </ButtonGroup>
                             
                             </div>
