@@ -21,15 +21,3 @@ describe("Multiple Recipe Tests",()=>{
     });
 
 });
-
-
-
-
-//tests
-// 2tsp 
-// 3 tsp
-// 3.5tsp
-// 3.5 tsp
-// 3 1/2 tsp
-// 3 1/2tbsp
-//3tsp 2 tbsp
