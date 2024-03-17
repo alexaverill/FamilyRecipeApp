@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 import "./Recipes.css";
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import RecipeCard from "../RecipeCard/RecipeCard";
 import { UserContext } from "../UserContext/UserContext";
 import { GetRecipes } from "../../API/RecipeApi";
 import { GetUsers } from "../../API/BaseApi";
 import MultiSelect from "../Multiselect/Multiselect";
-import { InitializeDB, SaveData } from "../../utilities/storage/DataStorage";
+import { SaveData } from "../../utilities/storage/DataStorage";
 import { LoadData } from "../../utilities/storage/DataStorage";
 export default function Recipes() {
-    const { user, favorites } = useContext(UserContext)
+    const { favorites } = useContext(UserContext)
     const [recipes, setRecipes] = useState([]);
     const [filteredRecipes, setFiltered] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +84,7 @@ export default function Recipes() {
             let filtered = recipes.filter(recipe => recipe.title.toLowerCase().includes(e) || recipe.description.toLowerCase().includes(e));
             setFiltered(filtered);
         }
-        if (e.length == 0) {
+        if (e.length === 0) {
             setFiltered(recipes);
         }
     }

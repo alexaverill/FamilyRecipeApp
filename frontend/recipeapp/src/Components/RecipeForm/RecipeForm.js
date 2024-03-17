@@ -1,4 +1,4 @@
-import { Button, Chip, Container, collapseClasses } from '@mui/material';
+import { Button, Chip } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import classes from './RecipeForm.module.css'
@@ -6,8 +6,7 @@ import EditableText from '../EditableText/EditableText';
 import { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
-import CollectionRow from '../CollectionRow/CollectionRow';
-import { AddToCollection, RemoveFromCollection } from '../../API/CollectionApi';
+import { RemoveFromCollection } from '../../API/CollectionApi';
 import { UserContext } from '../UserContext/UserContext';
 import EditableTextArea from '../EditableTextArea/EditableTextArea';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -37,8 +36,6 @@ export default function RecipeForm() {
     const [alert, setAlert] = useState({ type: 'success', visible: false, message: '' });
     const { user } = useContext(UserContext);
     const [icon, setIcon] = useState('seven.svg');
-    const [initialIconIdx, setIconIdx] = useState(0);
-    const [initialColorIdx, setColorIdx] = useState(0);
     const colors = ["#FF9F2F", "#3CCEE2", "#227C88", "#4DC643", "#FF5D8E", "#DD3F65", "#B955C2", "#7B3981"];
     const icons = ["seven.svg", "two.svg", "three.svg", "four.svg", "five.svg", "six.svg", "one.svg", "eight.svg"];
     const [color, setColor] = useState('#FF9F2F');
@@ -85,7 +82,7 @@ export default function RecipeForm() {
     }
     const removeIngredient = (index, ingredient) => {
         ingredients.splice(index, 1);
-        if (ingredients.length == 0) {
+        if (ingredients.length === 0) {
             setIngredients(['']);
             return;
         }
@@ -98,7 +95,7 @@ export default function RecipeForm() {
     }
     let ingredientDisplay = ingredients.map((ingredient, index) => {
         var isLast = index === ingredients.length - 1 && index > 0;
-        if (isLast && ingredient=='') {
+        if (isLast && ingredient === '') {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' onKeyDown={handleIngredientEnter} value={ingredient} onChange={(e) => setIngredientChanged(index, e.target.value)} autoFocus></TextField>
@@ -113,7 +110,7 @@ export default function RecipeForm() {
     });
     const removeStep = (index) => {
         steps.splice(index, 1);
-        if (steps.length == 0) {
+        if (steps.length === 0) {
             setSteps(['']);
             return;
         }
@@ -135,7 +132,7 @@ export default function RecipeForm() {
 
     let instructionDisplay = steps.map((step, index) => {
         var isLast = index === steps.length - 1 && index > 0;
-        if (isLast && step == '') {
+        if (isLast && step === '') {
             return <div className={classes.listEntry}><div className={classes.listItem}>
 
                 <TextField size='small' value={step} onKeyDown={handleStepsEnter} onChange={(e) => setStepsChanged(index, e.target.value)} autoFocus></TextField>
@@ -150,12 +147,6 @@ export default function RecipeForm() {
     const handleSave = async () => {
         console.log("Save");
         setIsLoading(true);
-        let cleanedCollections = collections?.map(collection => {
-            if (collection.name != undefined || collection.name != null) {
-                return { name: collection.name, collectionId: collection.collectionId };
-            }
-        });
-
         let eventObj = {
             userId: user.userId,
             recipeId,
@@ -213,24 +204,18 @@ export default function RecipeForm() {
         let data = await LoadData("recipescache",1);
         if(data){
             let newData = data.data;
-            let index = newData.findIndex((recipe)=>recipe.recipeId == recipeId);
+            let index = newData.findIndex((recipe)=>recipe.recipeId === recipeId);
             newData.splice(index,1);
             await SaveData("recipescache",newData);
         }
         navigate('/');
-    }
-    const handleColorChanged = (color) => {
-        setColor(color);
-    }
-    const handleIconChanged = (icon) => {
-        setIcon(icon);
     }
 
     const handleDelete = async (collectionId, name) => {
         let collectionObj = { collectionId, name };
         let recipeObj = { recipeId, title };
         await RemoveFromCollection(recipeObj, collectionObj)
-        collections.splice(collections.findIndex(c => c.collectionId == collectionId), 1);
+        collections.splice(collections.findIndex(c => c.collectionId === collectionId), 1);
         setCollections([...collections])
     }
     let collectionList = collections?.map((collection) => {
@@ -248,8 +233,8 @@ export default function RecipeForm() {
                 </Alert> : <></>}
             <div className='twoColumn'>
                 <div className={classes.imageColumn}>
-                    <div className={classes.recipeImage} style={imageStyle}><img src={imagePath} /><Button className={classes.edit} onClick={() => setEditIcon(!editIcon)}><EditIcon /></Button></div>
-                    {editIcon ? <IconCreation colorChanged={(c) => setColor(c)} iconChanged={(i) => setIcon(i)} initialColor={colors.findIndex(c => c == color)} initialIcon={icons.findIndex(i => i == icon)} colors={colors} icons={icons} /> : <></>}
+                    <div className={classes.recipeImage} style={imageStyle}><img src={imagePath} alt="Recipe Icon"/><Button className={classes.edit} onClick={() => setEditIcon(!editIcon)}><EditIcon /></Button></div>
+                    {editIcon ? <IconCreation colorChanged={(c) => setColor(c)} iconChanged={(i) => setIcon(i)} initialColor={colors.findIndex(c => c === color)} initialIcon={icons.findIndex(i => i == icon)} colors={colors} icons={icons} /> : <></>}
                 </div>
                 <div className='recipes'>
                     <div className={classes.titleRow}>
