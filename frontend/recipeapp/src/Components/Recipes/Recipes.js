@@ -40,6 +40,10 @@ export default function Recipes() {
         }
         if(cachedUsers){
             setUserList(cachedUsers?.data);
+            if(Date.now() > cachedUsers.timestamp+(4 * 60 *60* 1000)){
+                console.log("User Cache Expired");
+                refereshUsers = true;
+            }
         }else {
             await fetchAndCacheUsers();
         }
