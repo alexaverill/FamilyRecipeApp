@@ -7,25 +7,43 @@ import { UserContext } from "../UserContext/UserContext";
 import { GetRecipes } from "../../API/RecipeApi";
 import { GetUsers } from "../../API/BaseApi";
 import MultiSelect from "../Multiselect/Multiselect";
+import { InitializeDB, SaveData } from "../../utilities/storage/DataStorage";
+import { LoadData } from "../../utilities/storage/DataStorage";
 export default function Recipes() {
     const { user, favorites } = useContext(UserContext)
     const [recipes, setRecipes] = useState([]);
     const [filteredRecipes, setFiltered] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [userList,setUserList] = useState([]);
+    
     useEffect(() => {
         LoadRecipes();
     }, [])
     const LoadRecipes = async () => {
         setIsLoading(true);
-        let data = await GetRecipes();
-        let users = await GetUsers();
-        if(users){
-            setUserList(users);
-        }
-        if (data) {
+        let cachedRecipes = await LoadData("recipescache",1);
+        let cachedUsers = await LoadData("usercache",1);
+        let data;
+        if(cachedRecipes){
+            data = cachedRecipes;
             setRecipes(data);
             setFiltered(data);
+        }else{
+            data  = await GetRecipes();
+            if(data){
+                setRecipes(data);
+                await SaveData("recipescache",data)
+                setFiltered(data);
+            }
+        }
+        if(cachedUsers){
+            setUserList(cachedUsers);
+        }else {
+            let users = await GetUsers();
+            if(users){
+                setUserList(users);
+                await SaveData("usercache",users);
+            }
         }
         setIsLoading(false);
     }
