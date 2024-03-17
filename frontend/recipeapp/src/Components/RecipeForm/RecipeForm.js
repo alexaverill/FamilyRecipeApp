@@ -16,6 +16,7 @@ import { CreateRecipe, DeleteRecipe } from '../../API/RecipeApi';
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 import IconCreation from '../IconCreation/IconCreation';
 import EditIcon from '@mui/icons-material/Edit';
+import { LoadData, SaveData } from '../../utilities/storage/DataStorage';
 export default function RecipeForm() {
     const initialTitleText = 'Tap to enter a Title';
     const initialDescriptionText = 'Tap to enter a description';
@@ -47,7 +48,6 @@ export default function RecipeForm() {
     }
     const canSave = title.length > 0 && arrayHasValidEntry(steps) > 0 && arrayHasValidEntry(ingredients);
     useEffect(() => {
-        console.log(location.state);
         if (location.state) {
             let recipe = location.state.recipe;
             if (location.state.variation) {
@@ -175,6 +175,7 @@ export default function RecipeForm() {
         if (data) {
             console.log(data.recipeId);
             setRecipeId(data.recipeId);
+            await saveRecipeToCache(data);
             setAlert({
                 visible: true,
                 type: "success",
@@ -192,6 +193,14 @@ export default function RecipeForm() {
         setTimeout(() => setAlert({ visible: false }), 5000);
         setIsLoading(false);
     }
+    const saveRecipeToCache = async (recipe)=>{
+        let data = await LoadData("recipescache",1);
+        if(data){
+            let newData = data.data;
+            newData.push(recipe);
+            await SaveData("recipescache",newData);   
+        }
+    }
     const handleRecipeDelete = () => {
         setConfirmationOpen(true);
     }
@@ -200,6 +209,14 @@ export default function RecipeForm() {
     }
     const handleConfirmation = async () => {
         await DeleteRecipe(recipeId);
+        //remove from recipe cache. 
+        let data = await LoadData("recipescache",1);
+        if(data){
+            let newData = data.data;
+            let index = newData.findIndex((recipe)=>recipe.recipeId == recipeId);
+            newData.splice(index,1);
+            await SaveData("recipescache",newData);
+        }
         navigate('/');
     }
     const handleColorChanged = (color) => {
@@ -210,10 +227,8 @@ export default function RecipeForm() {
     }
 
     const handleDelete = async (collectionId, name) => {
-        console.log(collectionId);
         let collectionObj = { collectionId, name };
         let recipeObj = { recipeId, title };
-        console.log(recipeObj);
         await RemoveFromCollection(recipeObj, collectionObj)
         collections.splice(collections.findIndex(c => c.collectionId == collectionId), 1);
         setCollections([...collections])

@@ -26,7 +26,7 @@ export default function RecipeCard({ recipe, favorited }) {
                         <div className={classes.cardDesc}>
                             {recipe.description}
                         </div>
-                        <div class={classes.scrollabe}>
+                        <div className={classes.scrollabe}>
                             <div className={classes.collections}>{collectionPills}</div>
                         </div>
                     </div>

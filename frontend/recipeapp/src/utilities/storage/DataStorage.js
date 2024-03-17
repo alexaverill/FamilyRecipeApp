@@ -31,22 +31,17 @@ export function InitializeDB() {
 }
 export function SaveData(saveStore,data) {
     console.log("Saving data");
-    if(!data.id){
-        data.id = 1;
-    }
-    data.timestamp = Date.now();
-    console.log(data);
+    let dataObj = {data,id:1,timestamp:Date.now()}
+    console.log(dataObj);
     return new Promise(resolve => {
         request = indexedDB.open(dbName);
         
         request.onsuccess = ()=>{
             db = request.result;
-            console.log(db.objectStoreNames);
             const transaction = db.transaction(saveStore,'readwrite');
-            
             const store = transaction.objectStore(saveStore);
-            store.add(data);
-            resolve(data);
+            store.put(dataObj);
+            resolve(dataObj);
 
         }
         request.onerror = ()=>{
@@ -72,7 +67,6 @@ export function LoadData(store,key) {
                     console.log("bad requst result");
                 }
                 db = request.result;
-                console.log(db.objectStoreNames);
                 const transaction = db.transaction(store);
                 const objectStore = transaction.objectStore(store);
                 const dataRequest = objectStore.get(key);

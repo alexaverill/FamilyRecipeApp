@@ -24,28 +24,48 @@ export default function Recipes() {
         let cachedRecipes = await LoadData("recipescache",1);
         let cachedUsers = await LoadData("usercache",1);
         let data;
+        let refreshRecipes  = false;
+        let refereshUsers = false;
         if(cachedRecipes){
-            data = cachedRecipes;
+            data = cachedRecipes?.data;
             setRecipes(data);
             setFiltered(data);
+            if(Date.now() > cachedRecipes.timestamp+(30*60* 1000)){
+                console.log("Recipe Cache Expired");
+                refreshRecipes = true;
+            }
+
         }else{
-            data  = await GetRecipes();
+            fetchAndCacheRecipes();
+        }
+        if(cachedUsers){
+            setUserList(cachedUsers?.data);
+        }else {
+            await fetchAndCacheUsers();
+        }
+        setIsLoading(false);
+        if(refreshRecipes){
+            console.log("Recipe Cache Refreshing");
+            await fetchAndCacheRecipes();
+        }
+        if(refereshUsers){
+            await fetchAndCacheUsers();
+        }
+    }
+    let fetchAndCacheRecipes = async () =>{
+            let data  = await GetRecipes();
             if(data){
                 setRecipes(data);
                 await SaveData("recipescache",data)
                 setFiltered(data);
             }
+    }; 
+    let fetchAndCacheUsers = async ()=>{
+        let users = await GetUsers();
+        if(users){
+            setUserList(users);
+            await SaveData("usercache",users);
         }
-        if(cachedUsers){
-            setUserList(cachedUsers);
-        }else {
-            let users = await GetUsers();
-            if(users){
-                setUserList(users);
-                await SaveData("usercache",users);
-            }
-        }
-        setIsLoading(false);
     }
     let recipeDisplay = filteredRecipes?.map((recipe) => {
         if (favorites?.length > 0 && favorites?.find((fav) => {
