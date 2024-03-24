@@ -13,6 +13,7 @@ export const handler = async (event, context) => {
   if (!parsedEvent.recipeId) {
     parsedEvent.recipeId = randomUUID();
     parsedEvent.creationDate = Date.now();
+    parsedEvent.updatedDate = Date.now();
     //new recipe check if we have a parentId to linkt to this recipe. 
     if (parsedEvent.parentId) {
       shouldLinkToParent = true;
