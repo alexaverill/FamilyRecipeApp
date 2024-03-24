@@ -3,6 +3,8 @@ let db;
 let dbName = 'recipesapp';
 let storeName = 'recipescache';
 let userStoreName = 'usercache';
+let favoriteStore = 'favoriteStore';
+let version = 2;
 export function InitializeDB() {
     console.log("Initializing database");
     return new Promise((resolve, reject) => {

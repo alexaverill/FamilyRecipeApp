@@ -18,7 +18,6 @@ export default function FavoriteView() {
         setLoading(true);
         if (!favorites) { console.log("No Favories"); return; }
         let ids = favorites.map((fav) => { return { recipeId: fav } });
-        console.log(ids);
         if (ids.length > 0) {
             let data = await QueryRecipes({ recipes: ids });
             setRecipes(data);
