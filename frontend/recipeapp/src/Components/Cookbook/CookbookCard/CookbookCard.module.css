@@ -1,0 +1,126 @@
+.cardContainer {
+    display: flex;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: hsba(0, 0%, 100%, 1);
+    border-radius: 0.5rem;
+    border: 1px solid #EDEDED;
+    text-decoration: none;
+    width: 30rem;
+    flex-grow:1;
+    min-width: 225px;
+    max-width: 225px;
+}
+
+.clickableCard {
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    cursor: pointer;
+    border-radius: 0.5rem;
+    border: 1px solid #EDEDED;
+    background: #F6F6F6;
+}
+
+.cardImg {
+    border-radius: .5rem .5rem 0 0;
+    min-width: 140px;
+    display:flex;
+    justify-content: center;
+}
+
+.img {
+    width:60%;
+}
+
+.cardContent {
+    display: flex;
+    padding: 1rem;
+    flex: 1 0 0;
+    justify-content: space-between;
+}
+
+.seperator {
+    align-self: center;
+
+}
+
+.subtitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: .5rem;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.cardTitle {
+    color: black;
+    font-family: Poppins;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1rem;
+}
+
+.cardDesc {
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 33px;
+}
+
+.scrollabe {
+    overflow-y: auto;
+}
+
+.collections {
+    gap: .5rem;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    max-width: 80%;
+    scrollbar-width: none;
+
+}
+
+.collections::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+}
+
+.textContent {
+
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+
+}
+
+
+
+@media only screen and (min-width: 320px) and (max-width: 479px) {
+    .cardTitle {
+        text-overflow: hidden;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cardContent{
+        padding-right: .25rem;
+        padding-left: .5rem;
+    }
+    .collections {
+        display: none;
+    }
+}

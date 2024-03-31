@@ -16,6 +16,7 @@ export const UserContextProvider = ({ children }) => {
             console.log(user);
             setUser(user)
             let favorites = await GetFavorites({ username: user.username, userId: user.userId });
+            //cache favorites
             setFavorites(favorites);
         } catch (e) {
             console.log(e);

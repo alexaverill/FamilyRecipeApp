@@ -1,0 +1,9 @@
+.scrollableContainer{
+    display:flex;
+    flex-direction: row;
+    overflow-x:scroll;
+    overflow-y:hidden;
+    scroll-snap-stop: always;
+    width:90vw;
+    gap:1rem;
+}

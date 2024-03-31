@@ -16,6 +16,8 @@ import { useContext } from 'react';
 import { CircularProgress } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material';
 import FavoriteView from './Components/FavoriteView/FavoriteView';
+import Cookbook from './Components/Cookbook/Cookbook';
+import CollectionPage from './Components/CollectionPage/CollectionPage';
 const theme = createTheme({
   palette: {
     primary: {
@@ -27,30 +29,35 @@ const theme = createTheme({
   },
 });
 function App() {
-  const {isLoading} = useContext(UserContext);
+  const { isLoading } = useContext(UserContext);
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-      <UserContextProvider>
-        {isLoading? <CircularProgress/>:
-        <>
-        <NavBar />
-        <Routes>
-          <Route path="/" element={
-            <AuthRoute>
-              <Recipes />
-            </AuthRoute>
-          } />
-          <Route path="/login" element={<Login />} />
-          <Route path="/create" element={<AuthRoute><RecipeForm /></AuthRoute>} />
-          <Route path="/favorites" element={<AuthRoute><FavoriteView /></AuthRoute>} />
-          <Route path="/collections" element={<AuthRoute><Collections /></AuthRoute>} />
-          <Route path="/collections/:collectionId" element={<AuthRoute><CollectionsView /></AuthRoute>} />
-          <Route path="/recipe/:recipeId/edit" element={<AuthRoute><RecipeForm /></AuthRoute>} />
-          <Route path="/recipe/:recipeId" element={<AuthRoute><RecipeView /></AuthRoute>} />
-        </Routes>
-        </>}
-      </UserContextProvider>
+        <UserContextProvider>
+          {isLoading ? <CircularProgress /> :
+            <>
+              <NavBar />
+              <Routes>
+                <Route path="/" element={
+                  <AuthRoute>
+                    <Cookbook />
+                  </AuthRoute>
+                } />
+                <Route path="/recipes" element={
+                  <AuthRoute>
+                    <Recipes />
+                  </AuthRoute>
+                } />
+                <Route path="/login" element={<Login />} />
+                <Route path="/create" element={<AuthRoute><RecipeForm /></AuthRoute>} />
+                <Route path="/favorites" element={<AuthRoute><FavoriteView /></AuthRoute>} />
+                <Route path="/collections" element={<AuthRoute><CollectionPage /></AuthRoute>} />
+                <Route path="/collections/:collectionId" element={<AuthRoute><CollectionsView /></AuthRoute>} />
+                <Route path="/recipe/:recipeId/edit" element={<AuthRoute><RecipeForm /></AuthRoute>} />
+                <Route path="/recipe/:recipeId" element={<AuthRoute><RecipeView /></AuthRoute>} />
+              </Routes>
+            </>}
+        </UserContextProvider>
       </ThemeProvider>
     </div>
   );

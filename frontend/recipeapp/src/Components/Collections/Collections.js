@@ -21,13 +21,8 @@ export default function Collections() {
         return <CollectionCard collection={collection} />
     })
     return (
-        <div className="content">
-            <div>
-                    <h1>Collections</h1>
-                </div>
             <div className={classes.collectionGrid}>
                { loading ? <CircularProgress/>: displayCollections}
             </div>
-        </div>
     )
 }
