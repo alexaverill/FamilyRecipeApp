@@ -5,7 +5,7 @@ let storeName = 'recipescache';
 let userStoreName = 'usercache';
 let favoriteStore = 'favoriteStore';
 let collectionStore = 'collectionStore';
-let version = 2;
+let version = 4;
 export function InitializeDB() {
     console.log("Initializing database");
     return new Promise((resolve, reject) => {
@@ -20,12 +20,23 @@ export function InitializeDB() {
                     break;
                 case 2:
                     console.log("creating favorite store");
-                    db.createObjectStore(favoriteStore, { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains(favoriteStore)) {
+                        db.createObjectStore(favoriteStore, { keyPath: 'id' });
+                    }
                 case 3:
                     console.log("creating collection store");
-                    if (!db.objectStoreNames.contains(userStoreName)) {
+                    //forcing update since I think I messed up my versioning.
+                    if (!db.objectStoreNames.contains(favoriteStore)) {
                         console.log("creating favorite store in version 3");
                         db.createObjectStore(favoriteStore, { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains(userStoreName)) {
+                        console.log("creating userName store in version 3");
+                        db.createObjectStore(userStoreName, { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains(storeName)) {
+                        console.log("creating recipe store in version 3");
+                        db.createObjectStore(storeName, { keyPath: 'id' });
                     }
                     db.createObjectStore(collectionStore, { keyPath: 'id' });
             }

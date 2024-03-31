@@ -141,7 +141,7 @@ export default function Recipes() {
                 <section>
                     <h2>Your Favorites</h2>
                     <div className={classes.scrollableContainer}>
-                        {favoriteCards}
+                        {favoriteCards.length >0? favoriteCards:"You have no favorites."}
                     </div>
                 </section>
                 <section>

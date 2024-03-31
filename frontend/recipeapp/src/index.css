@@ -15,6 +15,7 @@ code {
   width:90%;
   margin: 4rem auto;
   margin-bottom: 4rem;
+  overflow: hidden;
 }
 .twoColumn{
   display:flex;
