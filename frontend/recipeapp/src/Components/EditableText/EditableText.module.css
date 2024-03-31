@@ -14,3 +14,15 @@
 .textedit{
     min-width: 40rem;
 }
+@media (max-width:510px) {
+    .editRow{
+        display:flex;
+        flex-direction: row;
+    }
+    .editButton{
+        width:20%;
+        border:1px solid red;
+    }
+
+
+      }
