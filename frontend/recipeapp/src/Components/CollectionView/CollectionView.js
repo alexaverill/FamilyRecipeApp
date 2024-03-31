@@ -33,8 +33,10 @@ export default function CollectionsView() {
     }
     const getRecipes = async (ids) => {
         if(!ids){return;}
+        setLoading(true);
         let data = await QueryRecipes({ recipes: ids });
         setRecipes(data);
+        setLoading(false);
     };
     let recipeDisplay = recipes?.map((recipe) => {
         return <RecipeCard recipe={recipe} favorited={favorites?.includes(recipe.recipeId)}/>; //<Link to={'/recipe/' + recipe.recipeId} state={{ recipe }}>

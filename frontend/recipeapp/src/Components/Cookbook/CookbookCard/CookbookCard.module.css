@@ -11,6 +11,8 @@
     text-decoration: none;
     width: 30rem;
     flex-grow:1;
+    min-width: 225px;
+    max-width: 225px;
 }
 
 .clickableCard {
@@ -28,10 +30,12 @@
 .cardImg {
     border-radius: .5rem .5rem 0 0;
     min-width: 140px;
+    display:flex;
+    justify-content: center;
 }
 
 .img {
-    width:100%;
+    width:60%;
 }
 
 .cardContent {

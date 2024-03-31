@@ -13,18 +13,16 @@ export default function CookbookCard({ recipe, favorited }) {
     let imagePath = `/images/${image}`;
     return (
         <div className={classes.card}>
-            <div className={classes.clickableCard}>
-                <div className={classes.cardImg} style={style} onClick={() => navigate('/recipe/' + recipe.recipeId, { state: { recipe } })}>
+            <div className={classes.clickableCard} onClick={() => navigate('/recipe/' + recipe.recipeId, { state: { recipe } })}>
+                <div className={classes.cardImg} style={style} >
                     <img className={classes.img} src={imagePath} />
                 </div>
                 <div className={classes.cardContent}>
                     <div className={classes.textContent}>
-                        <div className={classes.cardTitle}>{recipe.title}<FavoriteButton recipeId={recipe.recipeId} favorited={favorited} /></div>
+                        <div className={classes.cardTitle}>{recipe.title}</div>
+                        {/* <FavoriteButton recipeId={recipe.recipeId} favorited={favorited} /> */}
                         <div className={classes.subtitle}>
                             <div>Contributed by {recipe.user?.username}</div>
-                        </div>
-                        <div className={classes.cardDesc}>
-                            {recipe.description}
                         </div>
                         <div className={classes.scrollabe}>
                             <div className={classes.collections}>{collectionPills}</div>

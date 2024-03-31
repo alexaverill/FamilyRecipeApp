@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { CircularProgress, TextField } from "@mui/material";
+import { CircularProgress, TextField, createChainedFunction } from "@mui/material";
 import RecipeCard from "../RecipeCard/RecipeCard";
 import { UserContext } from "../UserContext/UserContext";
 import { GetRecipes } from "../../API/RecipeApi";
@@ -10,16 +10,46 @@ import { SaveData } from "../../utilities/storage/DataStorage";
 import { LoadData } from "../../utilities/storage/DataStorage";
 import classes from './Cookbook.module.css';
 import CookBookCard from './CookbookCard/CookbookCard'
+import Collections from "../Collections/Collections";
 export default function Recipes() {
     const { favorites } = useContext(UserContext)
     const [recipes, setRecipes] = useState([]);
     const [filteredRecipes, setFiltered] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [userList,setUserList] = useState([]);
-    
+    const [featuredRecipes,setFeaturedRecipes] = useState([]);
+    const [recentlyAdded,setRecentlyAdded] = useState([]);
+    const carouselNumber = 8;
     useEffect(() => {
         LoadRecipes();
-    }, [])
+    }, []);
+    const createRecipeCards = (recipes)=>{
+        return recipes.map((recipe)=>{
+            
+            return <CookBookCard recipe={recipe} key={recipe.recipeId} favorited={true} />;
+        })
+    }
+    const getRecentRecipes = (recipes) =>{
+        let datedRecipes = recipes.filter((recipe)=>{
+            return !!recipe.creationDate;
+        });
+        let mostRecent = datedRecipes.sort((a,b)=>{
+            return new Date(b.creationDate) - new Date(a.creationDate);
+        }).slice(0,carouselNumber);
+        return createRecipeCards(mostRecent);
+    };
+    const getFeaturedRecipes = (recipes)=>{
+        
+        let tmpArray = [];
+
+        for(let x=0;x <carouselNumber; x++){
+            let index = Math.floor(Math.random() * recipes.length); 
+            let recipe = recipes.splice(index,1);
+            tmpArray.push(recipe[0]);
+        }
+        return createRecipeCards(tmpArray);
+
+    }
     const LoadRecipes = async () => {
         setIsLoading(true);
         let cachedRecipes = await LoadData("recipescache",1);
@@ -28,15 +58,16 @@ export default function Recipes() {
         let refreshRecipes  = false;
         let refereshUsers = false;
         if(cachedRecipes){
+
             data = cachedRecipes?.data;
-            console.log(data);
             setRecipes(data);
             setFiltered(data);
+            setFeaturedRecipes(getFeaturedRecipes(data));
+            setRecentlyAdded(getRecentRecipes(data));
             if(Date.now() > cachedRecipes.timestamp+(30*60* 1000)){
                 console.log("Recipe Cache Expired");
                 refreshRecipes = true;
             }
-
         }else{
             fetchAndCacheRecipes();
         }
@@ -88,7 +119,6 @@ export default function Recipes() {
             setFiltered(recipes);
         }
     }
-
     return (
         <div className="content">
             <div className="recipeHeader">
@@ -103,10 +133,26 @@ export default function Recipes() {
             </div>
             <div className="recipeGrid">
                 <section>
+                    <h2>Recently Added</h2>
+                    <div className={classes.scrollableContainer}>
+                        {recentlyAdded}
+                    </div>
+                </section>
+                <section>
                     <h2>Your Favorites</h2>
                     <div className={classes.scrollableContainer}>
                         {favoriteCards}
                     </div>
+                </section>
+                <section>
+                    <h2>Featured Recipes</h2>
+                    <div className={classes.scrollableContainer}>
+                        {featuredRecipes}
+                    </div>
+                </section>
+                <section>
+                <h2>Collections</h2>
+                    <Collections/>
                 </section>
             </div>
         </div>

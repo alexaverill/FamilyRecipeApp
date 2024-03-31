@@ -17,6 +17,7 @@ import { CircularProgress } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material';
 import FavoriteView from './Components/FavoriteView/FavoriteView';
 import Cookbook from './Components/Cookbook/Cookbook';
+import CollectionPage from './Components/CollectionPage/CollectionPage';
 const theme = createTheme({
   palette: {
     primary: {
@@ -50,7 +51,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/create" element={<AuthRoute><RecipeForm /></AuthRoute>} />
                 <Route path="/favorites" element={<AuthRoute><FavoriteView /></AuthRoute>} />
-                <Route path="/collections" element={<AuthRoute><Collections /></AuthRoute>} />
+                <Route path="/collections" element={<AuthRoute><CollectionPage /></AuthRoute>} />
                 <Route path="/collections/:collectionId" element={<AuthRoute><CollectionsView /></AuthRoute>} />
                 <Route path="/recipe/:recipeId/edit" element={<AuthRoute><RecipeForm /></AuthRoute>} />
                 <Route path="/recipe/:recipeId" element={<AuthRoute><RecipeView /></AuthRoute>} />
