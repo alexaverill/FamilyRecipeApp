@@ -8,6 +8,6 @@ export default function EditableText({initialText,text,onChange,label}){
     if(isEditing){
         return <TextField label={label} value={text} onBlur={()=>setEditing(false) } inputProps={{ maxLength: 80 }} onChange={onChange} size='small' fullWidth autoFocus></TextField>
     }
-    return <div onClick={()=>setEditing(true)} className={text.length<=0 ? classes.placeholder : ''}><div className={classes.editRow}>{text.length>0?text:initialText}<Button><EditIcon/></Button></div></div>
+    return <div onClick={()=>setEditing(true)} className={text.length<=0 ? classes.placeholder : ''}><div className={classes.editRow}>{text.length>0?text:initialText}<Button className={classes.editButton}><EditIcon/></Button></div></div>
 
 }

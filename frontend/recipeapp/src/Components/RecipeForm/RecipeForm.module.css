@@ -4,12 +4,14 @@
     justify-content: space-between;
     align-items: center;
 }
-.title{
-    width:50%;
+
+.title {
+    width: 50%;
     font-size: 1.5rem;
     font-style: normal;
     font-weight: 700;
 }
+
 .leftAlign {
     text-align: left;
 }
@@ -65,7 +67,7 @@
     display: flex;
     flex-direction: row;
     max-height: 3rem;
-    
+
 }
 
 .filledButton {
@@ -86,11 +88,13 @@
     gap: 1rem;
     flex-wrap: wrap;
 }
+
 .listColumn {
-	gap: 0.5rem;
-	display: flex;
-	flex-direction: column;
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
 }
+
 .listHint {
     color: #B2B2B2;
     font-family: Inter;
@@ -99,29 +103,74 @@
     font-weight: 400;
     line-height: normal;
 }
-.recipeImage{
+
+.recipeImage {
     border-radius: 4px;
-    width:200px;
-    height:200px;
+    width: 200px;
+    height: 200px;
 }
-.imageColumn{
-    position:relative;
+
+.imageColumn {
+    position: relative;
 }
+
 .edit {
-	position: absolute;
-	z-index: 3;
-	left: 5px;
-	top: -45px;
-	background-color: white !important;
-	border-radius: 50px !important;
-	height: 35px;
-	min-width: 0 !important;
+    position: absolute;
+    z-index: 3;
+    left: 5px;
+    top: -45px;
+    background-color: white !important;
+    border-radius: 50px !important;
+    height: 35px;
+    min-width: 0 !important;
 }
-.edit:hover{
+
+.edit:hover {
     background-color: #EDEDED !important;
 }
 
-.addButton{
+.addButton {
     width: 12rem;
-   font-weight: bold;
+    font-weight: bold;
+}
+
+@media (max-width:510px) {
+    .recipes {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .titleRow {
+        flex-direction: column;
+        margin-bottom: 3rem;
+
+    }
+
+    .title {
+        width: 100%;
+    }
+
+    .editRow {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .actions>button {
+        width: 100%;
+    }
+
+    .imageColumn {
+        position: relative;
+
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        margin-top: 1rem;
+    }
 }
