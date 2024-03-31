@@ -126,7 +126,7 @@ export default function Recipes() {
                     <h1>Our Cookbook</h1> 
                 </div>
                 <div className="search-and-add">
-                    <TextField size="small" label="Search" onChange={(e) => filterRecipes(e.target.value)}></TextField>
+                    {/* <TextField size="small" label="Search" onChange={(e) => filterRecipes(e.target.value)}></TextField> */}
                     <Link component="button" to="/create" className="recipeLinkButton">Add New Recipe</Link>
                     <Link component="button" to="/recipes" className="recipeLinkButton">View All Recipes</Link>
                 </div>
