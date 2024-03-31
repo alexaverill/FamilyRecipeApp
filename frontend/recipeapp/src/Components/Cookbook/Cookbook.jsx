@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
-import { Link } from "react-router-dom";
-import { CircularProgress, TextField, createChainedFunction } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { CircularProgress, TextField, createChainedFunction, Autocomplete, Box } from "@mui/material";
 import RecipeCard from "../RecipeCard/RecipeCard";
 import { UserContext } from "../UserContext/UserContext";
 import { GetRecipes } from "../../API/RecipeApi";
@@ -16,35 +16,36 @@ export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
     const [filteredRecipes, setFiltered] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [userList,setUserList] = useState([]);
-    const [featuredRecipes,setFeaturedRecipes] = useState([]);
-    const [recentlyAdded,setRecentlyAdded] = useState([]);
+    const [userList, setUserList] = useState([]);
+    const [featuredRecipes, setFeaturedRecipes] = useState([]);
+    const [recentlyAdded, setRecentlyAdded] = useState([]);
     const carouselNumber = 8;
+    const navigate = useNavigate();
     useEffect(() => {
         LoadRecipes();
     }, []);
-    const createRecipeCards = (recipes)=>{
-        return recipes.map((recipe)=>{
-            
+    const createRecipeCards = (recipes) => {
+        return recipes.map((recipe) => {
+
             return <CookBookCard recipe={recipe} key={recipe.recipeId} favorited={true} />;
         })
     }
-    const getRecentRecipes = (recipes) =>{
-        let datedRecipes = recipes.filter((recipe)=>{
+    const getRecentRecipes = (recipes) => {
+        let datedRecipes = recipes.filter((recipe) => {
             return !!recipe.creationDate;
         });
-        let mostRecent = datedRecipes.sort((a,b)=>{
+        let mostRecent = datedRecipes.sort((a, b) => {
             return new Date(b.creationDate) - new Date(a.creationDate);
-        }).slice(0,carouselNumber);
+        }).slice(0, carouselNumber);
         return createRecipeCards(mostRecent);
     };
-    const getFeaturedRecipes = (recipes)=>{
-        
+    const getFeaturedRecipes = (recipes) => {
+
         let tmpArray = [];
 
-        for(let x=0;x <carouselNumber; x++){
-            let index = Math.floor(Math.random() * recipes.length); 
-            let recipe = recipes.splice(index,1);
+        for (let x = 0; x < carouselNumber; x++) {
+            let index = Math.floor(Math.random() * recipes.length);
+            let recipe = recipes.splice(index, 1);
             tmpArray.push(recipe[0]);
         }
         return createRecipeCards(tmpArray);
@@ -52,62 +53,62 @@ export default function Recipes() {
     }
     const LoadRecipes = async () => {
         setIsLoading(true);
-        let cachedRecipes = await LoadData("recipescache",1);
-        let cachedUsers = await LoadData("usercache",1);
+        let cachedRecipes = await LoadData("recipescache", 1);
+        let cachedUsers = await LoadData("usercache", 1);
         let data;
-        let refreshRecipes  = false;
+        let refreshRecipes = false;
         let refereshUsers = false;
-        if(cachedRecipes){
+        if (cachedRecipes) {
 
             data = cachedRecipes?.data;
             setRecipes(data);
             setFiltered(data);
             setFeaturedRecipes(getFeaturedRecipes(data));
             setRecentlyAdded(getRecentRecipes(data));
-            if(Date.now() > cachedRecipes.timestamp+(30*60* 1000)){
+            if (Date.now() > cachedRecipes.timestamp + (30 * 60 * 1000)) {
                 console.log("Recipe Cache Expired");
                 refreshRecipes = true;
             }
-        }else{
+        } else {
             fetchAndCacheRecipes();
         }
-        if(cachedUsers){
+        if (cachedUsers) {
             setUserList(cachedUsers?.data);
-            if(Date.now() > cachedUsers.timestamp+(4 * 60 *60* 1000)){
+            if (Date.now() > cachedUsers.timestamp + (4 * 60 * 60 * 1000)) {
                 console.log("User Cache Expired");
                 refereshUsers = true;
             }
-        }else {
+        } else {
             await fetchAndCacheUsers();
         }
         setIsLoading(false);
-        if(refreshRecipes){
+        if (refreshRecipes) {
             console.log("Recipe Cache Refreshing");
             await fetchAndCacheRecipes();
         }
-        if(refereshUsers){
+        if (refereshUsers) {
             await fetchAndCacheUsers();
         }
     }
-    let fetchAndCacheRecipes = async () =>{
-            let data  = await GetRecipes();
-            if(data){
-                setRecipes(data);
-                await SaveData("recipescache",data)
-                setFiltered(data);
-            }
-    }; 
-    let fetchAndCacheUsers = async ()=>{
+    let fetchAndCacheRecipes = async () => {
+        let data = await GetRecipes();
+        if (data) {
+            setRecipes(data);
+            await SaveData("recipescache", data)
+            setFiltered(data);
+        }
+    };
+    let fetchAndCacheUsers = async () => {
         let users = await GetUsers();
-        if(users){
+        if (users) {
             setUserList(users);
-            await SaveData("usercache",users);
+            await SaveData("usercache", users);
         }
     }
-    let favoriteRecipes = recipes.filter(recipe => { 
+    let favoriteRecipes = recipes.filter(recipe => {
         return favorites.includes(recipe.recipeId)
     });
-    let favoriteCards = favoriteRecipes?.map((recipe)=>{
+    let favoriteCards = favoriteRecipes?.map((recipe) => {
         return <CookBookCard recipe={recipe} key={recipe.recipeId} favorited={true} />;
     })
     const filterRecipes = (e) => {
@@ -123,10 +124,50 @@ export default function Recipes() {
         <div className="content">
             <div className="recipeHeader">
                 <div className='title-filter'>
-                    <h1>Our Cookbook</h1> 
+                    <h1>Our Cookbook</h1>
                 </div>
                 <div className="search-and-add">
-                    {/* <TextField size="small" label="Search" onChange={(e) => filterRecipes(e.target.value)}></TextField> */}
+                    <Autocomplete
+                        id="recipe-search"
+                        size='small' 
+                        sx={{ width: 300 }}
+                        options={recipes}
+                        autoHighlight
+                        getOptionLabel={(option) => option.title}
+                        onKeyDown={(event)=>{
+                            if(event.key === 'Enter'){
+                                let title = event.target.value;
+                                let recipe = recipes.find((recipe)=>recipe.title ===title );
+                                if(recipe){
+                                    navigate(`/recipe/${recipe.recipeId}`);
+                                }
+                            }
+
+                        }}
+                        onChange={(event,value)=>{
+                                if(value?.recipeId){
+                                    navigate(`/recipe/${value.recipeId}`);
+                                }
+                        }}
+                        renderOption={(props, option) => (
+                            <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                                <Link component="li" id={option.recipeId} className={classes.searchLink} sx={{ '& > img': { mr: 2, flexShrink: 0 } }} to={`/recipe/${option.recipeId}`}>
+                                    {option.title}
+                                </Link>
+                            </Box>
+                        )}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                size='small' 
+                                label="Search for a Recipe"
+                                inputProps={{
+                                    ...params.inputProps,
+                                    autoComplete: 'new-password', // disable autocomplete and autofill
+                                }}
+                            />
+                        )}
+                    />
                     <Link component="button" to="/create" className="recipeLinkButton">Add New Recipe</Link>
                     <Link component="button" to="/recipes" className="recipeLinkButton">View All Recipes</Link>
                 </div>
@@ -141,7 +182,7 @@ export default function Recipes() {
                 <section>
                     <h2>Your Favorites</h2>
                     <div className={classes.scrollableContainer}>
-                        {favoriteCards.length >0? favoriteCards:"You have no favorites."}
+                        {favoriteCards.length > 0 ? favoriteCards : "You have no favorites."}
                     </div>
                 </section>
                 <section>
@@ -151,8 +192,8 @@ export default function Recipes() {
                     </div>
                 </section>
                 <section>
-                <h2>Collections</h2>
-                    <Collections/>
+                    <h2>Collections</h2>
+                    <Collections />
                 </section>
             </div>
         </div>
