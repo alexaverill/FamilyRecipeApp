@@ -57,7 +57,6 @@ export default function RecipeView() {
       setRecipe(data);
       setCollections(data.collections);
     }
-    console.log(data);
     setIsLoading(false);
   };
   useEffect(() => {
