@@ -1,0 +1,45 @@
+.bold {
+    font-weight: bold;
+}
+
+.importCol {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.importCol>button {
+    width: 60.5%;
+}
+
+.textarea {
+    width: 60%;
+    height: 50vh;
+}
+
+.title {
+    width: 60.5%;
+}
+
+.success {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.error {
+    font-weight: bold;
+    font-size: 2rem;
+    color: red;
+}
+
+@media(max-width:1200px) {
+    .textarea {
+        width: 95%;
+    }
+
+    .title {
+        width: 95%;
+    }
+}
