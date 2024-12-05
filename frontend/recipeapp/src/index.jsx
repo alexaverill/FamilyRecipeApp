@@ -9,8 +9,8 @@ import { InitializeDB } from "./utilities/storage/DataStorage";
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolClientId: process.env.REACT_APP_POOL_CLIENT_ID,
-      userPoolId: process.env.REACT_APP_USERPOOL_ID,
+      userPoolClientId: import.meta.env.VITE_POOL_CLIENT_ID,
+      userPoolId: import.meta.env.VITE_USERPOOL_ID,
     },
   },
 });

@@ -20,10 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import * as DOMPurify from "dompurify";
-import {
-  multiply_recipe,
-  parseInputToFloat,
-} from "../../utilities/multiplyRecipe";
+import { multiply_recipe } from "../../utilities/multiplyRecipe";
 
 export default function RecipeView() {
   const navigate = useNavigate();
