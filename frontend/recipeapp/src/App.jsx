@@ -22,6 +22,8 @@ import FavoriteView from "./Components/FavoriteView/FavoriteView";
 import Cookbook from "./Components/Cookbook/Cookbook";
 import CollectionPage from "./Components/CollectionPage/CollectionPage";
 import { Import } from "./Components/Import/Import";
+import MealPlanning from "./Components/MealPlanning/MealPlanning";
+import EditMealPlan from "./Components/MealPlanning/EditMealPlan/EditMealPlan";
 const theme = createTheme({
   palette: {
     primary: {
@@ -107,6 +109,22 @@ function App() {
                   element={
                     <AuthRoute>
                       <RecipeView />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="/plans"
+                  element={
+                    <AuthRoute>
+                      <MealPlanning />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="/plans/:planId"
+                  element={
+                    <AuthRoute>
+                      <EditMealPlan />
                     </AuthRoute>
                   }
                 />
