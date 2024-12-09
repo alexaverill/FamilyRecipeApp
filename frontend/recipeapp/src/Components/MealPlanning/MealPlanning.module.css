@@ -1,0 +1,11 @@
+.container {
+    width: 90%;
+    margin: auto;
+    margin-top: 2rem;
+    padding-bottom: 5rem;
+}
+
+.titleRow {
+    display: flex;
+    justify-content: space-between;
+}

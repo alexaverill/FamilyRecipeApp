@@ -1,0 +1,91 @@
+.container {
+    width: 90%;
+    margin: auto;
+    margin-top: 2rem;
+    padding-bottom: 5rem;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.content {
+    display: flex;
+    gap: 3rem;
+}
+
+.buttons {
+    display: flex;
+    gap: 1rem
+}
+
+.day_title {
+    font-weight: bold;
+}
+
+.day_cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recipes {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recipe_entry {
+    display: flex;
+    padding: .75rem;
+    border: 2px solid #b2b2b2;
+    border-radius: .5rem;
+    justify-content: space-between;
+}
+
+.recipe_entry_title {
+    font-weight: bold;
+}
+
+.days {
+    width: 50%;
+}
+
+.ingredient {
+    font-size: 1.1rem;
+    padding: .5rem;
+}
+
+:checked+span {
+    text-decoration: line-through;
+}
+
+.inputRow {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width:800px) {
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .days {
+        width: 100%;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recipe_entry {
+        display: flex;
+        flex-direction: column;
+    }
+}

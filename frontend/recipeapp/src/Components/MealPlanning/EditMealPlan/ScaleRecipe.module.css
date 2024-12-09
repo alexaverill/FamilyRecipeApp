@@ -1,0 +1,14 @@
+.ingredentScale {
+    align-content: center;
+    display: flex;
+    max-height: 40px;
+    align-self: center;
+}
+
+.ingredentScale input {
+    max-width: 3.5rem;
+}
+
+.ingredentScale button {
+    text-transform: none;
+}

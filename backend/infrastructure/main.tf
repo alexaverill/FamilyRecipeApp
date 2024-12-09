@@ -99,6 +99,36 @@ resource "aws_dynamodb_table" "recipe-users-dynamodb-table" {
 
   }
 }
+
+resource "aws_dynamodb_table" "recipe-meal-plan-table" {
+  name           = "MealPlans"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "planId"
+  attribute {
+    name = "planId"
+    type = "S"
+  }
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+  global_secondary_index {
+    name               = "planIdIndex"
+    hash_key           = "planId"
+    range_key          = "userId"
+    projection_type    = "ALL"
+  }
+  global_secondary_index {
+    name               = "UserIdIndex"
+    hash_key           = "userId"
+    projection_type    = "ALL"
+  }
+  tags = {
+    Name        = "recipe-app-table"
+
+  }
+}
+
 // Lambdas
 module "create_recipe_lambda" {
   source = "./lambda_module"
@@ -212,6 +242,29 @@ module "get_users_lambda" {
   lambda_name = "get-users-lambda"
   handler_path = "index.handler"
 }
+module "create_plan_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/createMealPlan"
+  output_path = "${path.module}/createMealPlan.zip"
+  lambda_name = "create-plan-lambda"
+  handler_path = "index.handler"
+}
+module "get_plans_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getMealPlans"
+  output_path = "${path.module}/getMealPlans.zip"
+  lambda_name = "get-plans-lambda"
+  handler_path = "index.handler"
+}
+
+module "get_plan_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/getMealPlan"
+  output_path = "${path.module}/getMealPlan.zip"
+  lambda_name = "get-plan-lambda"
+  handler_path = "index.handler"
+}
+
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
   name          = "RecipeAppsGateway"
@@ -492,6 +545,48 @@ module "get_users_api" {
   method="GET"
   lambda_arn = module.get_users_lambda.lambda_arn
   lambda_function_name = module.get_users_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "create-plan-api" {
+  permission_name = "create-plan-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="create-plan"
+  method="POST"
+  lambda_arn = module.create_plan_lambda.lambda_arn
+  lambda_function_name = module.create_plan_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get-plans-api" {
+  permission_name = "get-plans-recipe"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-plans"
+  method="POST"
+  lambda_arn = module.get_plans_lambda.lambda_arn
+  lambda_function_name = module.get_plans_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "get_plan_api" {
+  permission_name = "get-plan"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="get-plan/{planId+}"
+  method="GET"
+  lambda_arn = module.get_plan_lambda.lambda_arn
+  lambda_function_name = module.get_plan_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "JWT"

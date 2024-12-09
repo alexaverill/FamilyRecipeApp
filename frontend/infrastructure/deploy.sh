@@ -1,1 +1,1 @@
-aws s3 sync ../recipeapp/build s3://familyrecipeapp.com
+aws s3 sync ../recipeapp/dist s3://familyrecipeapp.com
