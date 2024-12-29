@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import classes from "./PlanCard.module.css";
-import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DeletePlan } from "../../API/PlanApi";
 import { useState } from "react";

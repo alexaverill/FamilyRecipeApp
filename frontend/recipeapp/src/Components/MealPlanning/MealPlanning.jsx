@@ -17,9 +17,8 @@ export default function MealPlanning() {
   const load = async () => {
     setLoading(true);
     let plans = await GetPlans({
-      userId: "dd2878ee-5a5c-400c-a569-043b4965e73a",
+      userId: user.userId,
     });
-    console.log(plans);
     setPlans(plans.plans);
     setSharedPlans(plans.shared);
     setLoading(false);
