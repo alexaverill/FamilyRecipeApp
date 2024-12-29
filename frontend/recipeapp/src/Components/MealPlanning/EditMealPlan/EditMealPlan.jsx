@@ -10,47 +10,82 @@ import { CreatePlan, GetPlan } from "../../../API/PlanApi";
 import { Link, useParams } from "react-router-dom";
 import EditableTextArea from "../../EditableTextArea/EditableTextArea";
 import { multiply_recipe } from "../../../utilities/multiplyRecipe";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { GetUsers } from "../../../API/BaseApi";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import { v4 as uuidv4 } from "uuid";
 
 export default function EditMealPlan() {
   const { planId } = useParams();
+  const [planUserId, setPlanUserId] = useState(null);
+  const [planIdState, setPlanId] = useState(null);
   const [title, setTitle] = useState("");
   const [days, setDays] = useState([]);
+  const [list, setList] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [additionalIngredients, setAdditional] = useState([]);
   const [newIngredient, setNewIngredient] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [lastSave, setLastSave] = useState("");
+  const [availableUsers, setAvailableUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   // const [planId, setPlanId] = useState(null);
   const { user } = useContext(UserContext);
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
-    console.log(planId);
-    if (planId !== "null") {
-      loadPlan();
-    }
     load();
   }, []);
-  const loadPlan = async () => {
-    let plan = await GetPlan(planId);
-    setTitle(plan.title);
-    setDays(plan.plan);
-    setAdditional(plan.additionalIngredients);
-    console.log(plan);
-  };
   const load = async () => {
+    setLoading(true);
     let cachedRecipes = await LoadData("recipescache", 1);
-    console.log(cachedRecipes);
+    let users = await GetUsers();
+
+    setAvailableUsers(users.filter((entry) => entry.userId !== user.userId));
     setRecipes(cachedRecipes.data);
+    if (planId !== "null") {
+      let plan = await GetPlan(planId);
+      setPlanId(planId);
+      setPlanUserId(plan.userId);
+      setTitle(plan.title);
+      setDays(plan.plan);
+      setList([...plan.additionalIngredients, ...plan.list]);
+      setAdditional(plan.additionalIngredients);
+      setLastSave(new Date(plan.updatedDate));
+      let selectedUsers = plan.shared.map((entry) => {
+        return users?.find((user) => user.userId === entry).username;
+      });
+      setSelectedUsers([...selectedUsers]);
+    }
+    setLoading(false);
   };
   const handleSave = async () => {
-    console.log("Saving");
+    setSaving(true);
+    let sharedUserIds = availableUsers
+      .filter((user) =>
+        selectedUsers.find((selected) => selected === user.username)
+      )
+      .map((entry) => entry.userId);
+
     let planObj = {
-      userId: user.userId,
-      planId: planId === "null" ? null : planId,
+      userId: planUserId === null ? user.userId : planUserId,
+      planId: planIdState === "null" ? null : planIdState,
       title: title,
       plan: days,
-      shared: [],
+      shared: [...sharedUserIds],
       additionalIngredients: additionalIngredients,
+      list: list,
     };
     let response = await CreatePlan(planObj);
+    console.log(response);
+    setPlanId(response.planId);
+    setLastSave(new Date(response.updatedDate));
+    setSaving(false);
   };
   const addDay = () => {
     let newDayName = `Day ${days.length + 1}`;
@@ -69,17 +104,25 @@ export default function EditMealPlan() {
       recipeId: recipe.recipeId,
       title: recipe.title,
       ingredients: recipe.ingredients,
+      list: recipe.ingredients.map((ingredient) => {
+        return { ingredient, checked: false, id: uuidv4() };
+      }),
     };
     days[day].recipes.push({ scaleFactor: 1, recipe: simplifiedRecipe });
     days[day].editTime = Date.now();
     setDays([...days]);
+    handleSave();
   };
   const handleAddIngredient = () => {
     if (newIngredient === "") {
       return;
     }
-    setAdditional([...additionalIngredients, newIngredient]);
+    setAdditional([
+      ...additionalIngredients,
+      { ingredient: newIngredient, checked: false, id: uuidv4() },
+    ]);
     setNewIngredient("");
+    handleSave();
   };
   const handleScaleChange = (name, recipeId, scaleFactor) => {
     let day = days.findIndex((day) => day.name === name);
@@ -88,6 +131,7 @@ export default function EditMealPlan() {
     );
     days[day].recipes[recipeIdx].scaleFactor = scaleFactor;
     setDays([...days]);
+    handleSave();
   };
   const removeRecipe = (name, recipeId) => {
     let day = days.findIndex((day) => day.name === name);
@@ -96,40 +140,91 @@ export default function EditMealPlan() {
     );
     days[day].recipes.splice(recipeIdx, 1);
     setDays([...days]);
+    handleSave();
   };
   const handleComment = (name, e) => {
     let day = days.findIndex((day) => day.name === name);
     days[day].comments = e.target.value;
     setDays([...days]);
+    handleSave();
   };
-  let additional = additionalIngredients.map((ingredient) => {
+  let additional = additionalIngredients.map((item) => {
     return (
       <div className={classes.ingredient}>
         <label>
-          <input type="checkbox" />
-          <span>{ingredient}</span>
+          <input type="checkbox" checked={item.checked} />
+          <span>{item.ingredient}</span>
         </label>
       </div>
     );
   });
+  const handleIngredientChecked = (event, itemId, name, recipeId) => {
+    let day = days.findIndex((day) => day.name === name);
+    let recipeIdx = days[day].recipes.findIndex(
+      (recipe) => recipe.recipe.recipeId === recipeId
+    );
+    let itemIdx = days[day].recipes[recipeIdx].recipe.list.findIndex(
+      (item) => item.id === itemId
+    );
+    days[day].recipes[recipeIdx].recipe.list[itemIdx].checked =
+      !days[day].recipes[recipeIdx].recipe.list[itemIdx].checked;
+
+    setDays([...days]);
+    handleSave();
+  };
   let ingredients = days.map((day) => {
-    console.log(day?.recipes);
     return day?.recipes?.map((recipe) => {
-      console.log(recipe);
-      return recipe.recipe.ingredients.map((ingredient) => (
-        <div className={classes.ingredient}>
+      return recipe.recipe.list?.map((item) => (
+        <div
+          className={
+            item.checked
+              ? `${classes.ingredient} ${classes.checkedIngredient}`
+              : classes.ingredient
+          }
+        >
           <label>
-            <input type="checkbox" />
-            <span>{multiply_recipe(ingredient, recipe.scaleFactor)}</span>
+            <span>{multiply_recipe(item.ingredient, recipe.scaleFactor)}</span>
+            <input
+              type="checkbox"
+              checked={item.checked}
+              onChange={(e) =>
+                handleIngredientChecked(
+                  e,
+                  item.id,
+                  day.name,
+                  recipe.recipe.recipeId
+                )
+              }
+            />
           </label>
         </div>
       ));
     });
   });
+  const handleDay = (editTime, name) => {
+    let day = days.findIndex((day) => day.editTime === editTime);
+    days[day].name = name;
+    setDays([...days]);
+  };
   let dayCards = days.map((day) => {
     return (
       <div key={day.editTime} className={classes.day_cards}>
-        <p className={classes.day_title}>{day.name}</p>
+        <div className={classes.titlerow}>
+          <p className={classes.day_title}>
+            <EditableText
+              text={day.name}
+              initialText={"Day"}
+              label={"Day Name"}
+              onChange={(e) => {
+                handleDay(day.editTime, e.target.value);
+              }}
+            />
+          </p>
+          <AutoCompleteRecipeList
+            recipes={recipes}
+            onSelected={(e) => addRecipeToDay(day.name, e)}
+          />
+        </div>
         <div className={classes.recipes}>
           {day?.recipes?.map((recipe) => {
             return (
@@ -139,19 +234,21 @@ export default function EditMealPlan() {
                     {recipe?.recipe.title}
                   </Link>
                 </p>
-                <ScaleRecipe
-                  onChange={(e) =>
-                    handleScaleChange(day.name, recipe?.recipe.recipeId, e)
-                  }
-                  scale={recipe?.scaleFactor}
-                />
-                <Button
-                  onClick={() =>
-                    removeRecipe(day.name, recipe?.recipe.recipeId)
-                  }
-                >
-                  X
-                </Button>
+                <div className={classes.recipeButtons}>
+                  <ScaleRecipe
+                    onChange={(e) =>
+                      handleScaleChange(day.name, recipe?.recipe.recipeId, e)
+                    }
+                    scale={recipe?.scaleFactor}
+                  />
+                  <Button
+                    onClick={() =>
+                      removeRecipe(day.name, recipe?.recipe.recipeId)
+                    }
+                  >
+                    X
+                  </Button>
+                </div>
               </div>
             );
           })}
@@ -162,13 +259,16 @@ export default function EditMealPlan() {
           onChange={(e) => handleComment(day.name, e)}
           label={"Comments"}
         />
-        <AutoCompleteRecipeList
-          recipes={recipes}
-          onSelected={(e) => addRecipeToDay(day.name, e)}
-        />
       </div>
     );
   });
+  const handleChange = (e) => {
+    console.log(e.target.value);
+    setSelectedUsers([...e.target.value]);
+  };
+  if (isLoading) {
+    return <h1>Loading</h1>;
+  }
   return (
     <div className={classes.container}>
       <div className={classes.title}>
@@ -177,35 +277,75 @@ export default function EditMealPlan() {
           initialText={"Title"}
           label={"Title"}
           onChange={(e) => {
-            console.log(e.target.value);
             setTitle(e.target.value);
           }}
         />
+
         <div className={classes.buttons}>
+          Last Saved: {lastSave.toLocaleString()}
           <Button onClick={addDay} variant="contained">
             Add Day
           </Button>
-          <Button onClick={() => handleSave()} variant="contained">
+          <LoadingButton
+            loading={saving}
+            onClick={() => handleSave()}
+            variant="contained"
+          >
             Save
-          </Button>
+          </LoadingButton>
         </div>
       </div>
+
       <div className={classes.content}>
         <div className={classes.days}>{dayCards}</div>
-        <div className={classes.grocery}>
-          <h2>Grocery List</h2>
-          <div class={classes.inputRow}>
-            <input
-              type="text"
-              className={classes.text}
-              onChange={(e) => setNewIngredient(e.target.value)}
-            />
-            <Button variant="contained" onClick={() => handleAddIngredient()}>
-              Add
-            </Button>
+        <div className={classes.right}>
+          <div className={classes.grocery}>
+            <h2 className={classes.groceryTitle}>Grocery List</h2>
+            <div className={classes.inputRow}>
+              <input
+                type="text"
+                className={classes.text}
+                onChange={(e) => setNewIngredient(e.target.value)}
+              />
+              <Button variant="contained" onClick={() => handleAddIngredient()}>
+                Add
+              </Button>
+            </div>
+            <div className={classes.list}>
+              {additional}
+              {ingredients}
+            </div>
           </div>
-          {additional}
-          {ingredients}
+          <div className={classes.shared}>
+            Shared With:
+            <Select
+              labelId="demo-multiple-chip-label"
+              id="demo-multiple-chip"
+              multiple
+              value={selectedUsers}
+              onChange={handleChange}
+              input={
+                <OutlinedInput id="select-multiple-chip" label="Shared With" />
+              }
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              )}
+            >
+              {availableUsers?.map((user) => (
+                <MenuItem
+                  key={user.userId}
+                  value={user.username}
+                  // style={getStyles(name, personName, theme)}
+                >
+                  {user.username}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
         </div>
       </div>
     </div>

@@ -112,7 +112,7 @@ export default function Recipes() {
     }
   };
   let favoriteRecipes = recipes.filter((recipe) => {
-    return favorites.includes(recipe.recipeId);
+    return favorites?.includes(recipe.recipeId);
   });
   let favoriteCards = favoriteRecipes?.map((recipe) => {
     return (

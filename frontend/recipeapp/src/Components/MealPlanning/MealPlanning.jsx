@@ -4,47 +4,59 @@ import { useContext, useEffect, useState } from "react";
 import { GetPlans } from "../../API/PlanApi";
 import { Link } from "react-router-dom";
 import classes from "./MealPlanning.module.css";
+import { PlanCard } from "./PlanCard";
+
 export default function MealPlanning() {
   const { user } = useContext(UserContext);
   const [plans, setPlans] = useState([]);
+  const [sharedPlans, setSharedPlans] = useState([]);
+  const [isLoading, setLoading] = useState(false);
   useEffect(() => {
     load();
   }, []);
   const load = async () => {
-    console.log(user.userId);
+    setLoading(true);
     let plans = await GetPlans({
       userId: "dd2878ee-5a5c-400c-a569-043b4965e73a",
     });
     console.log(plans);
-    setPlans(plans);
+    setPlans(plans.plans);
+    setSharedPlans(plans.shared);
+    setLoading(false);
+  };
+  const updatePlanList = (planId) => {
+    let planIndex = plans.findIndex((plan) => plan.planId === planId);
+    if (planIndex != -1) {
+      let newPlans = plans;
+      newPlans.splice(planIndex, 1);
+      setPlans([...newPlans]);
+      return;
+    }
+    let sharedIndex = sharedPlans.findIndex((plan) => plan.planId === planId);
+    if (sharedIndex != -1) {
+      let newPlans = sharedPlans;
+      newPlans.splice(planIndex, 1);
+      setSharedPlans([...newPlans]);
+      return;
+    }
   };
   let planCards = plans.map((plan) => {
-    return (
-      <div>
-        <Link to={`/plans/${plan.planId}`}>{plan.title}</Link>
-      </div>
-    );
+    return <PlanCard plan={plan} deleteCallback={(id) => updatePlanList(id)} />;
+  });
+  let sharedCards = sharedPlans.map((plan) => {
+    return <PlanCard plan={plan} deleteCallback={(id) => updatePlanList(id)} />;
   });
   return (
     <div className={classes.container}>
       <h1>Meal Planning!</h1>
-      <div>
-        <div className={classes.titleRow}>
-          <h2>Your Meal Plans</h2>
-
-          <Link
-            component="button"
-            to="/plans/null"
-            className="recipeLinkButton"
-          >
-            Add Plan
-          </Link>
-        </div>
-        <Link to="/plans/1f4e8336-039d-4205-9746-7dd9e8496b49">
-          Christmas 2024
+      <div className={classes.titleRow}>
+        <h2>Your Meal Plans</h2>
+        <Link component="button" to="/plans/null" className="recipeLinkButton">
+          Add Plan
         </Link>
-        {planCards}
       </div>
+      {planCards}
+      {sharedCards}
     </div>
   );
 }

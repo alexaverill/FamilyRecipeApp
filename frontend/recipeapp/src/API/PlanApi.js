@@ -12,3 +12,7 @@ export async function GetPlan(planId) {
   let url = `/get-plan/${planId}`;
   return await genericApiCall(url, "GET", null);
 }
+export async function DeletePlan(planId) {
+  let url = "/delete-plan/" + planId;
+  return await genericApiCall(url, "DELETE", null);
+}

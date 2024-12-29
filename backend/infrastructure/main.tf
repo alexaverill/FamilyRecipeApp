@@ -264,6 +264,13 @@ module "get_plan_lambda" {
   lambda_name = "get-plan-lambda"
   handler_path = "index.handler"
 }
+module "delete_plan_lambda" {
+  source = "./lambda_module"
+  source_path =  "../${path.module}/lambdas/src/deleteMealPlan"
+  output_path = "${path.module}/deleteMealPlan.zip"
+  lambda_name = "delete-plan-lambda"
+  handler_path = "index.handler"
+}
 
 #api gateway
 resource "aws_apigatewayv2_api" "recipeapp-gateway" {
@@ -587,6 +594,20 @@ module "get_plan_api" {
   method="GET"
   lambda_arn = module.get_plan_lambda.lambda_arn
   lambda_function_name = module.get_plan_lambda.lambda_function_name
+  region = var.region
+  account_id = local.account_id
+  auth_type = "JWT"
+  authorizer_id =aws_apigatewayv2_authorizer.auth.id
+  gateway_execution_arn = aws_apigatewayv2_api.recipeapp-gateway.execution_arn
+}
+module "delete_plan_api" {
+  permission_name = "delete-plan"
+  source = "./api_endpoint_module"
+  gateway_id=aws_apigatewayv2_api.recipeapp-gateway.id
+  route="delete-plan/{planId+}"
+  method="DELETE"
+  lambda_arn = module.delete_plan_lambda.lambda_arn
+  lambda_function_name = module.delete_plan_lambda.lambda_function_name
   region = var.region
   account_id = local.account_id
   auth_type = "JWT"
