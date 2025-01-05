@@ -115,7 +115,7 @@
     border: 1px solid #b2b2b2;
     border-radius: 16px;
     padding: 1rem;
-
+    gap: 1rem;
 }
 
 .grocery-title {
@@ -146,7 +146,7 @@
 .ingredient>label {
     display: flex;
     width: 100%;
-    justify-content: space-between;
+    gap: 1rem;
 }
 
 span+ :checked {
@@ -188,7 +188,7 @@ span+ :checked {
         flex-direction: column;
     }
 
-    .grocery {
+    .right {
         width: 95%;
     }
 }

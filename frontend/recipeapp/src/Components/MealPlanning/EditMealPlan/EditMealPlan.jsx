@@ -9,7 +9,7 @@ import { UserContext } from "../../UserContext/UserContext";
 import { CreatePlan, GetPlan } from "../../../API/PlanApi";
 import { Link, useParams } from "react-router-dom";
 import EditableTextArea from "../../EditableTextArea/EditableTextArea";
-import { multiply_recipe } from "../../../utilities/multiplyRecipe";
+
 import LoadingButton from "@mui/lab/LoadingButton";
 import { GetUsers } from "../../../API/BaseApi";
 import Box from "@mui/material/Box";
@@ -20,6 +20,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import { v4 as uuidv4 } from "uuid";
+import { IngredientCard } from "./IngredientCard";
 
 export default function EditMealPlan() {
   const { planId } = useParams();
@@ -46,7 +47,8 @@ export default function EditMealPlan() {
     let cachedRecipes = await LoadData("recipescache", 1);
     let users = await GetUsers();
 
-    setAvailableUsers(users.filter((entry) => entry.userId !== user.userId));
+    setAvailableUsers(users); //.filter((entry) => entry.userId !== user.userId));
+
     setRecipes(cachedRecipes.data);
     if (planId !== "null") {
       let plan = await GetPlan(planId);
@@ -148,16 +150,12 @@ export default function EditMealPlan() {
     setDays([...days]);
     handleSave();
   };
-  let additional = additionalIngredients.map((item) => {
-    return (
-      <div className={classes.ingredient}>
-        <label>
-          <input type="checkbox" checked={item.checked} />
-          <span>{item.ingredient}</span>
-        </label>
-      </div>
-    );
-  });
+  const handleAdditionalChecked = (item) => {
+    let index = additionalIngredients.findIndex((entry) => entry === item);
+    additionalIngredients[index].checked =
+      !additionalIngredients[index].checked;
+    setAdditional([...additionalIngredients]);
+  };
   const handleIngredientChecked = (event, itemId, name, recipeId) => {
     let day = days.findIndex((day) => day.name === name);
     let recipeIdx = days[day].recipes.findIndex(
@@ -172,35 +170,19 @@ export default function EditMealPlan() {
     setDays([...days]);
     handleSave();
   };
-  let ingredients = days.map((day) => {
-    return day?.recipes?.map((recipe) => {
-      return recipe.recipe.list?.map((item) => (
-        <div
-          className={
-            item.checked
-              ? `${classes.ingredient} ${classes.checkedIngredient}`
-              : classes.ingredient
-          }
-        >
-          <label>
-            <span>{multiply_recipe(item.ingredient, recipe.scaleFactor)}</span>
-            <input
-              type="checkbox"
-              checked={item.checked}
-              onChange={(e) =>
-                handleIngredientChecked(
-                  e,
-                  item.id,
-                  day.name,
-                  recipe.recipe.recipeId
-                )
-              }
-            />
-          </label>
-        </div>
-      ));
-    });
-  });
+  let ingredients = days
+    .map((day) => {
+      return day?.recipes?.map((recipe) => {
+        return recipe.recipe.list?.map((item) => ({
+          item,
+          scale: recipe.scaleFactor,
+          day: day.name,
+          recipeId: recipe.recipe.recipeId,
+        }));
+      });
+    })
+    .flat(Infinity);
+
   const handleDay = (editTime, name) => {
     let day = days.findIndex((day) => day.editTime === editTime);
     days[day].name = name;
@@ -269,6 +251,31 @@ export default function EditMealPlan() {
   if (isLoading) {
     return <h1>Loading</h1>;
   }
+  let ingredientList = [
+    ...additionalIngredients.map((item) => {
+      return { item };
+    }),
+    ...ingredients,
+  ];
+  console.log(ingredientList);
+  ingredientList
+    .sort((a, b) => {
+      return b.item.checked - a.item.checked;
+    })
+    .reverse();
+  let ingredientCards = ingredientList?.map((entry) => {
+    if (entry)
+      return (
+        <IngredientCard
+          item={entry.item}
+          recipeId={entry.recipeId}
+          handleAdditionalChecked={handleAdditionalChecked}
+          handleIngredientChecked={handleIngredientChecked}
+          day={entry.day}
+          scaleFactor={entry.scale}
+        />
+      );
+  });
   return (
     <div className={classes.container}>
       <div className={classes.title}>
@@ -305,16 +312,20 @@ export default function EditMealPlan() {
               <input
                 type="text"
                 className={classes.text}
-                onChange={(e) => setNewIngredient(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddIngredient();
+                  }
+                }}
+                onChange={(e) => {
+                  setNewIngredient(e.target.value);
+                }}
               />
               <Button variant="contained" onClick={() => handleAddIngredient()}>
                 Add
               </Button>
             </div>
-            <div className={classes.list}>
-              {additional}
-              {ingredients}
-            </div>
+            <div className={classes.list}>{ingredientCards}</div>
           </div>
           <div className={classes.shared}>
             Shared With:
@@ -336,11 +347,7 @@ export default function EditMealPlan() {
               )}
             >
               {availableUsers?.map((user) => (
-                <MenuItem
-                  key={user.userId}
-                  value={user.username}
-                  // style={getStyles(name, personName, theme)}
-                >
+                <MenuItem key={user.userId} value={user.username}>
                   {user.username}
                 </MenuItem>
               ))}
