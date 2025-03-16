@@ -148,7 +148,6 @@ export default function EditMealPlan() {
     let day = days.findIndex((day) => day.name === name);
     days[day].comments = e.target.value;
     setDays([...days]);
-    handleSave();
   };
   const handleAdditionalChecked = (item) => {
     let index = additionalIngredients.findIndex((entry) => entry === item);
@@ -239,6 +238,11 @@ export default function EditMealPlan() {
           initialText={"Add notes or other dishes here"}
           text={day.comments}
           onChange={(e) => handleComment(day.name, e)}
+          onBlur={() => {
+            if (day.comment.length > 0) {
+              handleSave();
+            }
+          }}
           label={"Comments"}
         />
       </div>
@@ -247,6 +251,7 @@ export default function EditMealPlan() {
   const handleChange = (e) => {
     console.log(e.target.value);
     setSelectedUsers([...e.target.value]);
+    handleSave();
   };
   if (isLoading) {
     return <h1>Loading</h1>;
