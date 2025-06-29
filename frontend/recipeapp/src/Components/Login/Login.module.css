@@ -5,13 +5,16 @@
     gap: 1rem;
     margin-top: 1rem;
 }
-.loginForm > button{
+
+.loginForm>button {
     min-width: 20vw;
 }
-.loginDialog{
-    width:35vw;
-    margin:0 auto;
+
+.loginDialog {
+    width: 35vw;
+    margin: 0 auto;
 }
+
 .loginRow {
     display: flex;
     align-items: center;
@@ -21,9 +24,11 @@
     width: 100%;
 
 }
-.loginRow > div{
+
+.loginRow>div {
     width: 100% !important;
 }
+
 .loginRow>span {
     color: #000;
     font-family: Inter;
@@ -68,4 +73,14 @@
 
 .img {
     width: 100%;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.recipeLinkButton {
+    padding: 1rem;
 }
