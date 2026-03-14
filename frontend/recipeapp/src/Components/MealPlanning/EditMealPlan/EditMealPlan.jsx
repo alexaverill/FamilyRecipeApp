@@ -48,8 +48,9 @@ export default function EditMealPlan() {
     let users = await GetUsers();
 
     setAvailableUsers(users); //.filter((entry) => entry.userId !== user.userId));
-
-    setRecipes(cachedRecipes.data);
+    if (cachedRecipes && cachedRecipes.data) {
+      setRecipes(cachedRecipes.data);
+    }
     if (planId !== "null") {
       let plan = await GetPlan(planId);
       setPlanId(planId);
@@ -309,7 +310,9 @@ export default function EditMealPlan() {
       </div>
 
       <div className={classes.content}>
-        <div className={classes.days}>{dayCards}</div>
+        <div className={classes.days} data-testid="recipe-list">
+          {dayCards}
+        </div>
         <div className={classes.right}>
           <div className={classes.grocery}>
             <h2 className={classes.groceryTitle}>Grocery List</h2>
