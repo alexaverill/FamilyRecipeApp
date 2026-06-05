@@ -1,6 +1,6 @@
 import Fraction from "fraction.js";
 //take in a string that has a ingredient value, then multiple the numeric portion by the multiple and return the new ingredient string.
-export function multiply_recipe(input_string, multiple) {
+export function multiply_recipe(input_string: string, multiple: number) {
   let val = input_string;
   let values = input_string.matchAll(/\d+(\.\d+|\s+\d+\/\d+)?/gim);
   let replacements = [];

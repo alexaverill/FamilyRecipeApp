@@ -9,9 +9,10 @@
   import { recipeStore } from "$lib/stores/recipestore";
   import { resolve } from "$app/paths";
   import { getCurrentUser } from "aws-amplify/auth";
-  import { goto } from "$app/navigation";
+  import { InitializeDB, SaveData } from "$lib/utilities/storage/DataStorage";
   let { children } = $props();
   onMount(async () => {
+    InitializeDB();
     Amplify.configure({
       Auth: {
         Cognito: {
@@ -25,14 +26,13 @@
       let currentUser = await getCurrentUser();
       $user = { username: currentUser.username, userId: currentUser.userId };
       console.log($user);
-
-      let recipes = await GetRecipes();
-      //deal with caching
-      $recipeStore = recipes;
     } catch (e) {
       console.log(e);
-      goto(resolve("/login"));
     }
+    let recipes = await GetRecipes();
+    //deal with caching
+    await SaveData("recipescache", recipes);
+    $recipeStore = recipes;
   });
 </script>
 
@@ -43,8 +43,7 @@
   <div class="left">
     <a class="title" href={resolve("/")}>Family Recipe App</a>
     <a class="link" href={resolve("/")}>Cook Book</a>
-    <!--<a class="link" href="./plan">Meal Plans</a>-->
-    <a class="link" href={resolve("/collections")}>Collections</a>
+    <a class="link" href="./collections">Collections</a>
   </div>
   <div class="right">
     <a href="./favorites" class="link">Favorites</a>
